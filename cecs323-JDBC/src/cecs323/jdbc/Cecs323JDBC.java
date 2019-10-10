@@ -64,18 +64,17 @@ public class Cecs323JDBC {
             System.out.println("Creating statement...");
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT au_id, au_fname, au_lname, phone FROM Authors";
+            sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
             ResultSet rs = stmt.executeQuery(sql);
 
             //STEP 5: Extract data from result set
-            System.out.printf(displayFormat, "ID", "First Name", "Last Name", "Phone #");
+            System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
             while (rs.next()) {
                 //Retrieve by column name
-                String id = rs.getString("au_id");
-                String phone = rs.getString("phone");
-                String first = rs.getString("au_fname");
-                String last = rs.getString("au_lname");
-
+                String id = rs.getString("groupname");
+                String phone = rs.getString("headwriter");
+                String first = rs.getString("yearformed");
+                String last = rs.getString("subject");
                 //Display values
                 System.out.printf(displayFormat, 
                         dispNull(id), dispNull(first), dispNull(last), dispNull(phone));
