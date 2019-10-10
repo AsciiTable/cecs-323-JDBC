@@ -5,11 +5,12 @@
  */
 
 /* Creates new database  */
-CREATE DATABASE IF NOT EXISTS ClientDriver;
+--CREATE DATABASE IF NOT EXISTS ClientDriver;
 /* Creates new user who has all permissions */
-CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.user.jwei','password');
-CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.sqlAuthorization','true');
-GRANT ALL PRIVILEGES ON Books TO jwei;
+-- CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.user.jwei','password');
+-- CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.sqlAuthorization','true');
+-- /CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.fullAccessUsers', 'jwei');
+-- GRANT ALL PRIVILEGES ON Books TO jwei;
 
 /* Creates WritingGroups Table 
     Holds the name of the group, the head writer, the founding year, and the subject the group writes about.*/
