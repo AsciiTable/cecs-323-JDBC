@@ -1,0 +1,31 @@
+Wed Oct 09 19:34:15 PDT 2019 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Wed Oct 09 19:34:15 PDT 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-016d-b384-4c1d-00003155ba72 
+on database directory /Users/jessica_wei/Desktop/Repositories/JDBC/JDBC-Project with class loader sun.misc.Launcher$AppClassLoader@6f94fa3e 
+Loaded from file:/Users/jessica_wei/Desktop/CECS%20323/db-derby-10.14.2.0-bin/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_181-b13
+user.dir=/Users/jessica_wei/Desktop/CECS 323/db-derby-10.14.2.0-bin
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.13.6
+derby.system.home=/Users/jessica_wei/Desktop/Repositories/JDBC
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Wed Oct 09 19:34:17 PDT 2019:
+Shutting down instance a816c00e-016d-b384-4c1d-00003155ba72 on database directory /Users/jessica_wei/Desktop/Repositories/JDBC/JDBC-Project with class loader sun.misc.Launcher$AppClassLoader@6f94fa3e 
+Wed Oct 09 19:34:17 PDT 2019 Thread[DRDAConnThread_3,5,main] (DATABASE = JDBC-Project), (DRDAID = {2}), Database 'JDBC-Project' shutdown.
+----------------------------------------------------------------
+Wed Oct 09 19:38:33 PDT 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance 6ede40af-016d-b384-4c1d-00003155ba72 
+on database directory /Users/jessica_wei/Desktop/Repositories/JDBC/JDBC-Project with class loader sun.misc.Launcher$AppClassLoader@6f94fa3e 
+Loaded from file:/Users/jessica_wei/Desktop/CECS%20323/db-derby-10.14.2.0-bin/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_181-b13
+user.dir=/Users/jessica_wei/Desktop/CECS 323/db-derby-10.14.2.0-bin
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.13.6
+derby.system.home=/Users/jessica_wei/Desktop/Repositories/JDBC
+Database Class Loader started - derby.database.classpath=''
