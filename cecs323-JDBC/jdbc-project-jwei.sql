@@ -65,5 +65,9 @@ INSERT INTO WritingGroups(groupname,headwriter,yearformed,subject) values
 ('Jade Studios','Dakota McNally',2018,'Technology'),
 ('AJR','Ryan Met',2005,'Music'),
 ('AsciiTable','Jessica Wei', 2000, 'Biography'),
-('Chicken Coup','Hanson Nguyen',2019,'Administration');
+('Chicken Coup','Hanson Nguyen',2019,'Administration'),
+('Just One Cookbook', 'Namiko Chen', 2018, 'Cooking'),
+('Tasty', 'Ze Frank', 2006, 'Cooking'),
+('Shakespeare Fan Club', 'William Shakespeare', 1564, 'Classic'),
+('BESST', 'Ariel Nam', 2018, 'Cohort');
 
