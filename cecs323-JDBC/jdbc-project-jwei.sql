@@ -61,5 +61,9 @@ CREATE TABLE Books(
 );
 
 INSERT INTO WritingGroups(groupname,headwriter,yearformed,subject) values
-('HelloWorld','Dennis Ritchie', 1941, 'Technology');
+('HelloWorld','Dennis Ritchie', 1941, 'Technology'),
+('Jade Studios','Dakota McNally',2018,'Technology'),
+('AJR','Ryan Met',2005,'Music'),
+('AsciiTable','Jessica Wei', 2000, 'Biography'),
+('Chicken Coup','Hanson Nguyen',2019,'Administration');
 

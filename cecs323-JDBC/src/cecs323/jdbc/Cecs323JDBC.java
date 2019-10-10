@@ -19,7 +19,7 @@ public class Cecs323JDBC {
     //The number indicates how wide to make the field.
     //The "s" denotes that it's a string.  All of our output in this test are 
     //strings, but that won't always be the case.
-    static final String displayFormat="%-5s%-15s%-15s%-15s\n";
+    static final String displayFormat="%-20s%-20s%-20s%-20s\n";
 // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -71,13 +71,13 @@ public class Cecs323JDBC {
             System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
             while (rs.next()) {
                 //Retrieve by column name
-                String id = rs.getString("groupname");
-                String phone = rs.getString("headwriter");
-                String first = rs.getString("yearformed");
-                String last = rs.getString("subject");
+                String gname = rs.getString("groupname");
+                String hwriter = rs.getString("headwriter");
+                String yformed = rs.getString("yearformed");
+                String subject = rs.getString("subject");
                 //Display values
                 System.out.printf(displayFormat, 
-                        dispNull(id), dispNull(first), dispNull(last), dispNull(phone));
+                        dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
             }
             //STEP 6: Clean-up environment
             rs.close();
