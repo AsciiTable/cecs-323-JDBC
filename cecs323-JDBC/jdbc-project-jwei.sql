@@ -90,3 +90,17 @@ INSERT INTO Publishers(publishername, publisheraddress, publisherphone, publishe
 ('Running Out', '1234 Help Street', '19099099090', 'gethelp@runningout.com'),
 ('Of Ideas', '2324 Void Street', '19999999999', 'noidea@plshelp.com');
 
+/* Inserts 12 entries into the Books table */
+INSERT INTO Books(groupname,publishername,booktitle,yearpublished,numberpages) values
+('HelloWorld', 'WorldHello', 'Hello To the World', 1950, 500),
+('VGDA', 'Make Believe', 'Intro to Game Development',  2019, 50),
+('Jade Studios', 'Eeveeloutions', 'Our First Game', 2018, 60),
+('Chess Club', 'TenTen Prints', 'We Had 3 Members', 2017, 1010),
+('Asexual and Straight', 'Blue Bunny', 'I Really Am', 2019, 5),
+('AJR', 'Mini Duc', 'Dear Winter',2010, 79),
+('AsciiTable', 'Sweet Prints', 'I Die Everyday',2015, 99),
+('Just One Cookbook', 'Total Concentration', 'Cook Right',2018, 46),
+('Chicken Coup', 'WowThat', 'Bawk Bawk Beans',2019, 10),
+('Tasty', 'Ummmmm', 'Video Binging',2014, 563),
+('BESST', 'Running Out', 'Actually a Harem',2019, 8),
+('Shakespeare Fan Club', 'Of Ideas', 'Outdated Poetry', 1829, 9999);
