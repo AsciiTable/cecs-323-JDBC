@@ -60,14 +60,33 @@ CREATE TABLE Books(
     CONSTRAINT books_ck_1 UNIQUE (BookTitle,PublisherName)
 );
 
+/* Inserts 12 entries into the WritingGroups table */
 INSERT INTO WritingGroups(groupname,headwriter,yearformed,subject) values
 ('HelloWorld','Dennis Ritchie', 1941, 'Technology'),
-('Jade Studios','Dakota McNally',2018,'Technology'),
+('Jade Studios','Dakota McNally',2018,'Recreation'),
 ('AJR','Ryan Met',2005,'Music'),
 ('AsciiTable','Jessica Wei', 2000, 'Biography'),
 ('Chicken Coup','Hanson Nguyen',2019,'Administration'),
 ('Just One Cookbook', 'Namiko Chen', 2018, 'Cooking'),
 ('Tasty', 'Ze Frank', 2006, 'Cooking'),
 ('Shakespeare Fan Club', 'William Shakespeare', 1564, 'Classic'),
-('BESST', 'Ariel Nam', 2018, 'Cohort');
+('BESST', 'Ariel Nam', 2018, 'Cohort'),
+('VGDA', 'Alex Pinedo', 2019, 'Technology'),
+('Chess Club', 'Justin Cheung', 2017, 'Recreation'),
+('Asexual and Straight', 'Linda Trinh', 2019, 'Biography');
+
+/* Inserts 12 entries into the Publishers table */
+INSERT INTO Publishers(publishername, publisheraddress, publisherphone, publisheremail) values
+('WorldHello', '0000 Galaxy Avenue', '10000000000', 'earth@galaxy.org'),
+('Make Believe', '9239 Rainbow Road', '1231232345', 'dreamstarters@imail.com'),
+('Eeveeloutions', '3241 Pallet Town', '19092931235', 'profoak@catchemall.com'),
+('TenTen Prints', '1010 Perfect Street', '11010101010', 'perfection1010@plushie.org'),
+('Blue Bunny', '3453 Fun Avenue', '14343943753', 'funplayfun@plushie.org'),
+('Mini Duc', '5755 Grass Land', '14086963049', 'miniduc@plushie.org'),
+('Sweet Prints', '1383 Candy Road', '19432034932', 'sweetprints@gmail.com'),
+('Total Concentration', '9843 Tanji Road', '12832392054', 'nezuko@demonslayer.com'),
+('WowThat', '1932 Blank Street', '13942034854', 'memethiswow@yahoo.com'),
+('Ummmmm', '3284 Blanking Avenue', '13854349584', 'contactumm@ummmm.com'),
+('Running Out', '1234 Help Street', '19099099090', 'gethelp@runningout.com'),
+('Of Ideas', '2324 Void Street', '19999999999', 'noidea@plshelp.com');
 

@@ -19,7 +19,7 @@ public class Cecs323JDBC {
     //The number indicates how wide to make the field.
     //The "s" denotes that it's a string.  All of our output in this test are 
     //strings, but that won't always be the case.
-    static final String displayFormat="%-20s%-20s%-20s%-20s\n";
+    static final String displayFormat="%-25s%-25s%-20s%-20s\n";
 // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
