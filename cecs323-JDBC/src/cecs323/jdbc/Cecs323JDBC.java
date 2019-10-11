@@ -13,6 +13,10 @@ public class Cecs323JDBC {
     static String USER;
     static String PASS;
     static String DBNAME;
+    // Required entries to access database
+    static final String cDB = "clientdriver";
+    static final String cUSER = "jessicawei";
+    static final String cPASS = "password";
     //This is the specification for the printout that I'm doing:
     //each % denotes the start of a new field.
     //The - denotes left justification.
@@ -24,30 +28,10 @@ public class Cecs323JDBC {
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
 //            + "testdb;user=";
-/**
- * Takes the input string and outputs "N/A" if the string is empty or null.
- * @param input The string to be mapped.
- * @return  Either the input string or "N/A" as appropriate.
- */
-    public static String dispNull (String input) {
-        //because of short circuiting, if it's null, it never checks the length.
-        if (input == null || input.length() == 0)
-            return "N/A";
-        else
-            return input;
-    }
     
     public static void main(String[] args) {
-        //Prompt the user for the database name, and the credentials.
-        //If your database has no credentials, you can update this code to 
-        //remove that from the connection string.
-        Scanner in = new Scanner(System.in);
-        System.out.print("Name of the database (not the user account): ");
-        DBNAME = in.nextLine();
-        System.out.print("Database user name: ");
-        USER = in.nextLine();
-        System.out.print("Database password: ");
-        PASS = in.nextLine();
+        login();
+        
         //Constructing the database URL connection string
         DB_URL = DB_URL + DBNAME + ";user="+ USER + ";password=" + PASS;
         Connection conn = null; //initialize the connection
@@ -107,4 +91,41 @@ public class Cecs323JDBC {
         }//end try
         System.out.println("Goodbye!");
     }//end main
+    
+/**
+ * Takes the input string and outputs "N/A" if the string is empty or null.
+ * @param input The string to be mapped.
+ * @return  Either the input string or "N/A" as appropriate.
+ */
+    public static String dispNull (String input) {
+        //because of short circuiting, if it's null, it never checks the length.
+        if (input == null || input.length() == 0)
+            return "N/A";
+        else
+            return input;
+    }//end dispNull
+    
+/**
+ * Takes the input string and outputs "N/A" if the string is empty or null.
+ * @param input The string to be mapped.
+ * @return  Either the input string or "N/A" as appropriate.
+ */
+    public static void login(){
+        //Prompt the user for the database name, and the credentials.
+        boolean loggedIn = false;
+        Scanner in = new Scanner(System.in);
+        while(!loggedIn){
+            System.out.print("Name of the database (not the user account): ");
+            DBNAME = in.nextLine();
+            System.out.print("Database user name: ");
+            USER = in.nextLine();
+            // Password is CASE SENSITIVE
+            System.out.print("Database password: ");
+            PASS = in.nextLine();
+            if(DBNAME.toLowerCase().equals(cDB) && USER.toLowerCase().equals(cUSER) && PASS.equals(cPASS))
+                loggedIn = true;
+            else
+                System.out.print("Cannot connect to ClientDriver Database. Please try again.\n\n");
+        }
+    }//end login
 }
