@@ -13,7 +13,7 @@ public class Cecs323JDBC {
     static String USER;
     static String PASS;
     static String DBNAME;
-    // Required entries to access database
+    // Required entries to access database 
     static final String cDB = "clientdriver";
     static final String cUSER = "jessicawei";
     static final String cPASS = "password";
@@ -24,25 +24,25 @@ public class Cecs323JDBC {
     //The "s" denotes that it's a string.  All of our output in this test are 
     //strings, but that won't always be the case.
     static final String displayFormat="%-25s%-25s%-20s%-20s\n";
-// JDBC driver name and database URL
+    // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
-//            + "testdb;user=";
+    //            + "testdb;user=";
     
     public static void main(String[] args) {
         login();
-        
+        Connection conn = connectDB();
         //Constructing the database URL connection string
         DB_URL = DB_URL + DBNAME + ";user="+ USER + ";password=" + PASS;
-        Connection conn = null; //initialize the connection
+        //Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
         try {
             //STEP 2: Register JDBC driver
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            //Class.forName("org.apache.derby.jdbc.ClientDriver");
 
             //STEP 3: Open a connection
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL);
+            //System.out.println("Connecting to database...");
+            //conn = DriverManager.getConnection(DB_URL);
 
             //STEP 4: Execute a query
             System.out.println("Creating statement...");
@@ -106,14 +106,13 @@ public class Cecs323JDBC {
     }//end dispNull
     
 /**
- * Takes the input string and outputs "N/A" if the string is empty or null.
- * @param input The string to be mapped.
- * @return  Either the input string or "N/A" as appropriate.
+ * Prompts for the database login credentials and loops until it's valid
  */
     public static void login(){
         //Prompt the user for the database name, and the credentials.
         boolean loggedIn = false;
         Scanner in = new Scanner(System.in);
+        // While the credentials are invalid, loop until valid
         while(!loggedIn){
             System.out.print("Name of the database (not the user account): ");
             DBNAME = in.nextLine();
@@ -128,4 +127,28 @@ public class Cecs323JDBC {
                 System.out.print("Cannot connect to ClientDriver Database. Please try again.\n\n");
         }
     }//end login
+    
+    public static Connection connectDB(){
+        Connection conn = null; //initialize the connection
+        Statement stmt = null;  //initialize the statement that we're using
+        try {
+            //STEP 2: Register JDBC driver
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+
+            //STEP 3: Open a connection
+            System.out.println("Connecting to database...");
+            conn = DriverManager.getConnection(DB_URL);
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return conn;
+    }
+    
+    public static void disconnectDB(Connection conn){
+        
+    }
 }
