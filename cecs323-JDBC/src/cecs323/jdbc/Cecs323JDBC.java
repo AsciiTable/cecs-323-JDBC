@@ -32,18 +32,8 @@ public class Cecs323JDBC {
     public static void main(String[] args) {
         login();
         Connection conn = connectDB();
-        //Constructing the database URL connection string
-        DB_URL = DB_URL + DBNAME + ";user="+ USER + ";password=" + PASS;
-        //Connection conn = null; //initialize the connection
         Statement stmt = null;  //initialize the statement that we're using
         try {
-            //STEP 2: Register JDBC driver
-            //Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-            //STEP 3: Open a connection
-            //System.out.println("Connecting to database...");
-            //conn = DriverManager.getConnection(DB_URL);
-
             //STEP 4: Execute a query
             System.out.println("Creating statement...");
             stmt = conn.createStatement();
@@ -64,31 +54,15 @@ public class Cecs323JDBC {
                         dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
             }
             //STEP 6: Clean-up environment
-            rs.close();
-            stmt.close();
-            conn.close();
+            cleanup(stmt,rs);
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         } catch (Exception e) {
             //Handle errors for Class.forName
             e.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException se2) {
-            }// nothing we can do
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }//end finally try
-        }//end try
+        }
+        disconnectDB(conn);
         System.out.println("Goodbye!");
     }//end main
     
@@ -126,11 +100,12 @@ public class Cecs323JDBC {
             else
                 System.out.print("Cannot connect to ClientDriver Database. Please try again.\n\n");
         }
+        //Constructing the database URL connection string
+        DB_URL = DB_URL + DBNAME + ";user="+ USER + ";password=" + PASS;
     }//end login
     
     public static Connection connectDB(){
         Connection conn = null; //initialize the connection
-        Statement stmt = null;  //initialize the statement that we're using
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -149,6 +124,46 @@ public class Cecs323JDBC {
     }
     
     public static void disconnectDB(Connection conn){
-        
+        try {
+            //STEP 6: Clean-up environment
+            conn.close();
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        } finally {
+            //finally block used to close resources
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }//end finally try
+        }//end try
+    }
+    
+    public static void cleanup(Statement stmt, ResultSet rs){
+        try {
+            //STEP 6: Clean-up environment
+            rs.close();
+            stmt.close();
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        } finally {
+            //finally block used to close resources
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException se2) {
+            }// nothing we can do; end finally try
+        }//end try
     }
 }
