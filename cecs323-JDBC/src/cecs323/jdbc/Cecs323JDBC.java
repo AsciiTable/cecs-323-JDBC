@@ -32,9 +32,9 @@ public class Cecs323JDBC {
     public static void main(String[] args) {
         login();
         Connection conn = connectDB();
-        Statement stmt = null;  //initialize the statement that we're using
         try {
             String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
+            Statement stmt = conn.createStatement(); //initialize the statement that we're using
             ResultSet rs = executeQuery(conn, stmt, sql);
 
             //STEP 5: Extract data from result set
@@ -168,7 +168,6 @@ public class Cecs323JDBC {
          //STEP 4: Execute a query 
         try{
             System.out.println("Creating statement...");
-            stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
         } catch (SQLException se) {
             //Handle errors for JDBC
