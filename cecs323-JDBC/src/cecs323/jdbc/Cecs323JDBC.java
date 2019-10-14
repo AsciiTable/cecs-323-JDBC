@@ -34,12 +34,8 @@ public class Cecs323JDBC {
         Connection conn = connectDB();
         Statement stmt = null;  //initialize the statement that we're using
         try {
-            //STEP 4: Execute a query 
-            System.out.println("Creating statement...");
-            stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
-            ResultSet rs = stmt.executeQuery(sql);
+            String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
+            ResultSet rs = executeQuery(conn, stmt, sql);
 
             //STEP 5: Extract data from result set
             System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
@@ -165,5 +161,22 @@ public class Cecs323JDBC {
             } catch (SQLException se2) {
             }// nothing we can do; end finally try
         }//end try
+    }
+    
+    public static ResultSet executeQuery(Connection conn, Statement stmt, String sql){
+        ResultSet rs = null;
+         //STEP 4: Execute a query 
+        try{
+            System.out.println("Creating statement...");
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return rs;
     }
 }
