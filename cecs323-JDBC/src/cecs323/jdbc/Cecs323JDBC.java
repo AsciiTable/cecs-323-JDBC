@@ -32,6 +32,9 @@ public class Cecs323JDBC {
     public static void main(String[] args) {
         login();
         Connection conn = connectDB();
+        Scanner menuIn = new Scanner(System.in);
+        
+        
         try {
             String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
             Statement stmt = conn.createStatement(); //initialize the statement that we're using
