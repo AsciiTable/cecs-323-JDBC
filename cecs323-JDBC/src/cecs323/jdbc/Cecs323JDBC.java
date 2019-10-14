@@ -34,7 +34,7 @@ public class Cecs323JDBC {
         Connection conn = connectDB();
         Statement stmt = null;  //initialize the statement that we're using
         try {
-            //STEP 4: Execute a query
+            //STEP 4: Execute a query 
             System.out.println("Creating statement...");
             stmt = conn.createStatement();
             String sql;
