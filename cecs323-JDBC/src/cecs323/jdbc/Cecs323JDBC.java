@@ -36,7 +36,7 @@ public class Cecs323JDBC {
         
         
         try {
-            String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups";
+            String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups"; 
             Statement stmt = conn.createStatement(); //initialize the statement that we're using
             ResultSet rs = executeQuery(conn, stmt, sql);
 
