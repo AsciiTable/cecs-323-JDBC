@@ -38,6 +38,7 @@ public class Cecs323JDBC {
         // Begin Menu Loop
         while(!quit){
             System.out.println();
+            printMenu();
             mOption = getIntBetween(menuIn, mOption, 1, 10);
             System.out.println();
             switch(mOption){
@@ -62,19 +63,57 @@ public class Cecs323JDBC {
                         //Handle errors for Class.forName
                         e.printStackTrace();
                     }
-
                     break;
                 case 2:
+
                     // List all the data for ONE group specified by the user
                     break;
                 case 3:
                     // List all publishers NAME ONLY
+                    try{
+                        String sql = "SELECT publishername FROM Publishers";
+                        Statement stmt = conn.createStatement();
+                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        
+                        System.out.println("\nPublisher Name");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String pname = rs.getString("publishername");
+                            //Display values
+                            System.out.println(dispNull(pname));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
                     break;
                 case 5:
                     // List all book titles NAME ONLY
+                    try{
+                        String sql = "SELECT bookTitle FROM Books";
+                        Statement stmt = conn.createStatement();
+                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        
+                        System.out.println("\nBook Title");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String bname = rs.getString("bookTitle");
+                            //Display values
+                            System.out.println(dispNull(bname));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
                     break;
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
@@ -218,6 +257,19 @@ public class Cecs323JDBC {
             e.printStackTrace();
         }
         return rs;
+    }
+    
+    public static void printMenu(){
+        System.out.print("1. List all writing groups\n" +
+                            "2. List all the data for one writing group\n"+
+                            "3. List all publishers\n"+
+                            "4. List all the data for one publisher\n"+
+                            "5. List all books\n"+
+                            "6. List all the data for one book\n"+
+                            "7. Insert new book\n"+
+                            "8. Insert new publisher\n"+
+                            "9. Remove a book\n"+
+                            "10. Quit\n\n");
     }
     
     public static int getIntBetween(Scanner mIn, int mOption, int min, int max){
