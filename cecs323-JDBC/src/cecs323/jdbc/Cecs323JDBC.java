@@ -35,41 +35,70 @@ public class Cecs323JDBC {
         Scanner menuIn = new Scanner(System.in);
         boolean quit = false;
         int mOption = 0;
+        // Begin Menu Loop
         while(!quit){
-            System.out.print("Menu Selection: ");
-            mOption = menuIn.nextInt();
+            System.out.println();
+            mOption = getInt(menuIn, mOption);
+            System.out.println();
             switch(mOption){
+                case 1: 
+                    // List all writing groups NAME ONLY
+                    try{
+                        String sql = "SELECT groupname FROM WritingGroups";
+                        Statement stmt = conn.createStatement();
+                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        
+                        System.out.println("\nGroup Name");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String gname = rs.getString("groupname");
+                            //Display values
+                            System.out.println(dispNull(gname));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
+
+                    break;
+                case 2:
+                    // List all the data for ONE group specified by the user
+                    break;
+                case 3:
+                    // List all publishers NAME ONLY
+                    break;
+                case 4:
+                    // List all the data for ONE publisher specified by the user
+                    break;
+                case 5:
+                    // List all book titles NAME ONLY
+                    break;
+                case 6:
+                    // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
+                    break;
+                case 7:
+                    // Insert a new book
+                    break;
+                case 8:
+                    // Insert a new publisher and update all books published by one publisher
+                    // to be published by the new publisher. Leave the old publisher alone, just modify
+                    // the books that they have published. Assume that the new publisher has bought out
+                    // the old one, so now any books published by the old publisher are publisehd by the new one
+                    
+                    break;
+                case 9:
+                    // Remove a book specified by a user 
+                    break;
                 default:
                     quit = true;
+                    break;
             }
         }
         
-        try {
-            String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups"; 
-            Statement stmt = conn.createStatement(); //initialize the statement that we're using
-            ResultSet rs = executeQuery(conn, stmt, sql);
 
-            //STEP 5: Extract data from result set
-            System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
-            while (rs.next()) {
-                //Retrieve by column name
-                String gname = rs.getString("groupname");
-                String hwriter = rs.getString("headwriter");
-                String yformed = rs.getString("yearformed");
-                String subject = rs.getString("subject");
-                //Display values
-                System.out.printf(displayFormat, 
-                        dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
-            }
-            //STEP 6: Clean-up environment
-            cleanup(stmt,rs);
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
         disconnectDB(conn);
         System.out.println("Goodbye!");
     }//end main
@@ -190,4 +219,54 @@ public class Cecs323JDBC {
         }
         return rs;
     }
+    
+    public static int getInt(Scanner mIn, int mOption){
+        boolean valid = false;
+        while(!valid){
+            System.out.print("Menu Selection: ");
+            if(mIn.hasNextInt()){
+                mOption = mIn.nextInt();
+                if(mOption > 0 && mOption < 11){
+                    valid = true;
+                    return mOption;
+                }
+                else{
+                    System.out.println("Invalid Selection.");
+                }
+                    
+            }else{
+                System.out.println("Invalid Input.");
+                mIn.next();
+            }
+        }
+        return mOption;
+    }
 }
+
+
+                    /*try {
+                        String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups"; 
+                        Statement stmt = conn.createStatement(); //initialize the statement that we're using
+                        ResultSet rs = executeQuery(conn, stmt, sql);
+
+                        //STEP 5: Extract data from result set
+                        System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String gname = rs.getString("groupname");
+                            String hwriter = rs.getString("headwriter");
+                            String yformed = rs.getString("yearformed");
+                            String subject = rs.getString("subject");
+                            //Display values
+                            System.out.printf(displayFormat, 
+                                    dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
+                        }
+                        //STEP 6: Clean-up environment
+                        cleanup(stmt,rs);
+                    } catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }**/
