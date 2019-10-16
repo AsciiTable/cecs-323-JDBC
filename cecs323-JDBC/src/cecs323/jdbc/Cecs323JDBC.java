@@ -33,7 +33,16 @@ public class Cecs323JDBC {
         login();
         Connection conn = connectDB();
         Scanner menuIn = new Scanner(System.in);
-        
+        boolean quit = false;
+        int mOption = 0;
+        while(!quit){
+            System.out.print("Menu Selection: ");
+            mOption = menuIn.nextInt();
+            switch(mOption){
+                default:
+                    quit = true;
+            }
+        }
         
         try {
             String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups"; 
