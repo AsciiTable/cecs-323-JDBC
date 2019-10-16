@@ -38,7 +38,7 @@ public class Cecs323JDBC {
         // Begin Menu Loop
         while(!quit){
             System.out.println();
-            mOption = getInt(menuIn, mOption);
+            mOption = getIntBetween(menuIn, mOption, 1, 10);
             System.out.println();
             switch(mOption){
                 case 1: 
@@ -220,22 +220,22 @@ public class Cecs323JDBC {
         return rs;
     }
     
-    public static int getInt(Scanner mIn, int mOption){
+    public static int getIntBetween(Scanner mIn, int mOption, int min, int max){
         boolean valid = false;
         while(!valid){
             System.out.print("Menu Selection: ");
             if(mIn.hasNextInt()){
                 mOption = mIn.nextInt();
-                if(mOption > 0 && mOption < 11){
+                if(mOption > (min-1) && mOption < (max+1)){
                     valid = true;
                     return mOption;
                 }
                 else{
-                    System.out.println("Invalid Selection.");
+                    System.out.println("Input out of range. Please choose a number between " + min + " and " + max + ".");
                 }
                     
             }else{
-                System.out.println("Invalid Input.");
+                System.out.println("Invalid Input. Please enter an integer.");
                 mIn.next();
             }
         }
