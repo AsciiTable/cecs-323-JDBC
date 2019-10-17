@@ -24,7 +24,7 @@ public class Cecs323JDBC {
     //The number indicates how wide to make the field.
     //The "s" denotes that it's a string.  All of our output in this test are 
     //strings, but that won't always be the case.
-    static final String displayFormat="%-25s%-25s%-20s%-20s\n";
+    static final String displayFormatWriter ="%-25s%-25s%-20s%-20s\n";
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -46,13 +46,13 @@ public class Cecs323JDBC {
         while(!quit){
             System.out.println();
             printMenu();
-            mOption = getIntBetween(menuIn, 1, 10);
+            mOption = getIntBetween(menuIn, 1, 10, "Menu Selection");
             System.out.println();
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
+                    writers = listGroups(conn, true);
                     System.out.println("\nGroup Name");
-                    writers = listGroups(conn);
                     for(int i = 0; i < writers.size(); i++){
                         System.out.println(writers.get(i));
                     }
@@ -60,23 +60,27 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
-                    System.out.println("Select Group: ");
-                    writers = listGroups(conn);
+                    writers = listGroups(conn, false);
                     for(int i = 0; i < writers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(writers.get(i));
                     }
-                    mOption = getIntBetween(menuIn, 1, writers.size()) - 1;
+                    System.out.println();
+                    mOption = getIntBetween(menuIn, 1, writers.size(), "Select Writing Group") - 1;
                     try{
                         sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
                                 + "WHERE groupname = '" + writers.get(mOption) + "'";
                         Statement stmt = conn.createStatement();
-                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        System.out.println();
+                        ResultSet rs = executeQuery(conn, stmt, sql, true);
+                        System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
                             String gname = rs.getString("groupname");
-                            //FINISH THIS WHEN YOU WSKE UP PLESSE
-                            //System.out.println(dispNull(gname));
+                            String hwriter = rs.getString("headwriter");
+                            String yformed = rs.getString("yearformed");
+                            String subject = rs.getString("subject");
+                            System.out.printf(displayFormatWriter, dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -92,7 +96,7 @@ public class Cecs323JDBC {
                     try{
                         sql = "SELECT publishername FROM Publishers";
                         Statement stmt = conn.createStatement();
-                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        ResultSet rs = executeQuery(conn, stmt, sql, true);
                         
                         System.out.println("\nPublisher Name");
                         while (rs.next()) {
@@ -119,7 +123,7 @@ public class Cecs323JDBC {
                     try{
                         sql = "SELECT bookTitle FROM Books";
                         Statement stmt = conn.createStatement();
-                        ResultSet rs = executeQuery(conn, stmt, sql);
+                        ResultSet rs = executeQuery(conn, stmt, sql, true);
                         
                         System.out.println("\nBook Title");
                         while (rs.next()) {
@@ -268,11 +272,12 @@ public class Cecs323JDBC {
         }//end try
     }
     
-    public static ResultSet executeQuery(Connection conn, Statement stmt, String sql){
+    public static ResultSet executeQuery(Connection conn, Statement stmt, String sql, boolean showConnecting){
         ResultSet rs = null;
          //STEP 4: Execute a query 
         try{
-            System.out.println("Creating statement...");
+            if(showConnecting)
+                System.out.println("Creating statement...");
             rs = stmt.executeQuery(sql);
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -297,11 +302,11 @@ public class Cecs323JDBC {
                             "10. Quit\n\n");
     }
     
-    public static int getIntBetween(Scanner mIn, int min, int max){
+    public static int getIntBetween(Scanner mIn, int min, int max, String prompt){
         int mOption = -1;
         boolean valid = false;
         while(!valid){
-            System.out.print("Menu Selection: ");
+            System.out.print(prompt + ": ");
             if(mIn.hasNextInt()){
                 mOption = mIn.nextInt();
                 if(mOption > (min-1) && mOption < (max+1)){
@@ -326,12 +331,12 @@ public class Cecs323JDBC {
         }
     }
     
-    public static ArrayList<String> listGroups(Connection conn){
+    public static ArrayList<String> listGroups(Connection conn, boolean showConnecting){
         ArrayList<String> groups = new ArrayList<String>();
         try{
             String sql = "SELECT groupname FROM WritingGroups";
             Statement stmt = conn.createStatement();
-            ResultSet rs = executeQuery(conn, stmt, sql);
+            ResultSet rs = executeQuery(conn, stmt, sql, showConnecting);
             while (rs.next()) {
                 //Retrieve by column name
                 String gname = rs.getString("groupname");
