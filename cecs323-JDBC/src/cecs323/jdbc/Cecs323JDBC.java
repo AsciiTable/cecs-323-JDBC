@@ -2,6 +2,7 @@ package cecs323.jdbc;
 
 import java.sql.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * Author:  Jessica Wei
@@ -35,26 +36,47 @@ public class Cecs323JDBC {
         Scanner menuIn = new Scanner(System.in);
         boolean quit = false;
         int mOption = 0;
+        String sql = "";
+        
+        ArrayList<String> writers = new ArrayList<String>();
+        ArrayList<String> publishers = new ArrayList<String>();
+        ArrayList<String> books = new ArrayList<String>();
+                
         // Begin Menu Loop
         while(!quit){
             System.out.println();
             printMenu();
-            mOption = getIntBetween(menuIn, mOption, 1, 10);
+            mOption = getIntBetween(menuIn, 1, 10);
             System.out.println();
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
+                    System.out.println("\nGroup Name");
+                    writers = listGroups(conn);
+                    for(int i = 0; i < writers.size(); i++){
+                        System.out.println(writers.get(i));
+                    }
+                    mOption = 1;
+                    break;
+                case 2:
+                    // List all the data for ONE group specified by the user
+                    System.out.println("Select Group: ");
+                    writers = listGroups(conn);
+                    for(int i = 0; i < writers.size(); i++){
+                        System.out.print((i+1)+". ");
+                        System.out.println(writers.get(i));
+                    }
+                    mOption = getIntBetween(menuIn, 1, writers.size()) - 1;
                     try{
-                        String sql = "SELECT groupname FROM WritingGroups";
+                        sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
+                                + "WHERE groupname = '" + writers.get(mOption) + "'";
                         Statement stmt = conn.createStatement();
                         ResultSet rs = executeQuery(conn, stmt, sql);
-                        
-                        System.out.println("\nGroup Name");
                         while (rs.next()) {
                             //Retrieve by column name
                             String gname = rs.getString("groupname");
-                            //Display values
-                            System.out.println(dispNull(gname));
+                            //FINISH THIS WHEN YOU WSKE UP PLESSE
+                            //System.out.println(dispNull(gname));
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -63,15 +85,12 @@ public class Cecs323JDBC {
                         //Handle errors for Class.forName
                         e.printStackTrace();
                     }
-                    break;
-                case 2:
-
-                    // List all the data for ONE group specified by the user
+                    mOption = 2;
                     break;
                 case 3:
                     // List all publishers NAME ONLY
                     try{
-                        String sql = "SELECT publishername FROM Publishers";
+                        sql = "SELECT publishername FROM Publishers";
                         Statement stmt = conn.createStatement();
                         ResultSet rs = executeQuery(conn, stmt, sql);
                         
@@ -89,14 +108,16 @@ public class Cecs323JDBC {
                         //Handle errors for Class.forName
                         e.printStackTrace();
                     }
+                    mOption = 3;
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
+                    mOption = 4;
                     break;
                 case 5:
                     // List all book titles NAME ONLY
                     try{
-                        String sql = "SELECT bookTitle FROM Books";
+                        sql = "SELECT bookTitle FROM Books";
                         Statement stmt = conn.createStatement();
                         ResultSet rs = executeQuery(conn, stmt, sql);
                         
@@ -114,22 +135,26 @@ public class Cecs323JDBC {
                         //Handle errors for Class.forName
                         e.printStackTrace();
                     }
+                    mOption = 5;
                     break;
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
+                    mOption = 6;
                     break;
                 case 7:
                     // Insert a new book
+                    mOption = 7;
                     break;
                 case 8:
                     // Insert a new publisher and update all books published by one publisher
                     // to be published by the new publisher. Leave the old publisher alone, just modify
                     // the books that they have published. Assume that the new publisher has bought out
                     // the old one, so now any books published by the old publisher are publisehd by the new one
-                    
+                    mOption = 8;
                     break;
                 case 9:
                     // Remove a book specified by a user 
+                    mOption = 9;
                     break;
                 default:
                     quit = true;
@@ -272,7 +297,8 @@ public class Cecs323JDBC {
                             "10. Quit\n\n");
     }
     
-    public static int getIntBetween(Scanner mIn, int mOption, int min, int max){
+    public static int getIntBetween(Scanner mIn, int min, int max){
+        int mOption = -1;
         boolean valid = false;
         while(!valid){
             System.out.print("Menu Selection: ");
@@ -292,6 +318,35 @@ public class Cecs323JDBC {
             }
         }
         return mOption;
+    }
+    
+    public static void copyList(ArrayList<String> o, ArrayList<String> c){
+        for(int i = 0; i < o.size(); i++){
+            c.set(i, o.get(i));
+        }
+    }
+    
+    public static ArrayList<String> listGroups(Connection conn){
+        ArrayList<String> groups = new ArrayList<String>();
+        try{
+            String sql = "SELECT groupname FROM WritingGroups";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = executeQuery(conn, stmt, sql);
+            while (rs.next()) {
+                //Retrieve by column name
+                String gname = rs.getString("groupname");
+                //Display values
+                //System.out.println(dispNull(gname));
+                groups.add(dispNull(gname));
+            }
+        }catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return groups;
     }
 }
 
