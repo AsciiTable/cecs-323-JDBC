@@ -90,7 +90,7 @@ public class Cecs323JDBC {
                         pstmt = conn.prepareStatement(sql);
                         
                         System.out.println();
-                        ResultSet rs = executeQuery(conn, pstmt, true);
+                        ResultSet rs = executeQ(conn, pstmt, true);
                         System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -128,10 +128,11 @@ public class Cecs323JDBC {
                     mOption = getIntBetween(menuIn, 1, publishers.size(), "Select Publisher") - 1;
                     try{
                         sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
-                                + "WHERE publishername = '" + publishers.get(mOption) + "'";
+                                + "WHERE publishername = ?";
                         pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, publishers.get(mOption));
                         System.out.println();
-                        ResultSet rs = executeQuery(conn, pstmt,true);
+                        ResultSet rs = executeQ(conn, pstmt,true);
                         System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -167,13 +168,13 @@ public class Cecs323JDBC {
                     mOption = getIntBetween(menuIn, 1, books.size(), "Select Writing Group") - 1;
                     try{
                         sql = "SELECT groupname, publishername, booktitle, yearpublished, numberpages FROM Books "
-                                + "WHERE groupname = ?";
+                                + "WHERE booktitle = ?";
                         
                         pstmt = conn.prepareStatement(sql);
                         pstmt.setString(1, books.get(mOption));
                         
                         System.out.println();
-                        ResultSet rs = executeQuery(conn, pstmt, true);
+                        ResultSet rs = executeQ(conn, pstmt, true);
                         System.out.printf(displayFormatBook, "\nGroup Name", "Publishername", "Book Title", "Year Published", "Number Pages");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -320,7 +321,7 @@ public class Cecs323JDBC {
         }//end try
     }
     
-    public static ResultSet executeQuery(Connection conn, PreparedStatement psmt, boolean showConnecting){
+    public static ResultSet executeQ(Connection conn, PreparedStatement psmt, boolean showConnecting){
         ResultSet rs = null;
          //STEP 4: Execute a query 
         try{
