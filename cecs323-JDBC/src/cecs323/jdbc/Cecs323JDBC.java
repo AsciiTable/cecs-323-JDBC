@@ -45,6 +45,8 @@ public class Cecs323JDBC {
         ArrayList<String> publishers = new ArrayList<String>();
         ArrayList<String> books = new ArrayList<String>();
         
+        PreparedStatement stmt;
+        
         /*PreparedStatement listNames;
         try {
             listNames = conn.prepareStatement("SELECT = ? FROM = ?");
@@ -61,7 +63,7 @@ public class Cecs323JDBC {
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
-                    writers = listWriters(conn, true, "groupName", "WritingGroups");
+                    writers = listNames(conn, true, "groupName", "WritingGroups");
                     System.out.println("\nGroup Name");
                     for(int i = 0; i < writers.size(); i++){
                         System.out.println(writers.get(i));
@@ -70,7 +72,7 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
-                    //writers = listOfNames(conn, false, "groupName", "WritingGroups", listNames);
+                    writers = listNames(conn, true, "groupName", "WritingGroups");
                     for(int i = 0; i < writers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(writers.get(i));
@@ -80,9 +82,10 @@ public class Cecs323JDBC {
                     try{
                         sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
                                 + "WHERE groupname = '" + writers.get(mOption) + "'";
-                        Statement stmt = conn.createStatement();
+                        stmt = conn.prepareStatement(sql);
+                        
                         System.out.println();
-                        ResultSet rs = executeQuery(conn, stmt, sql, true);
+                        ResultSet rs = executeQuery(conn, stmt, true);
                         System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -103,7 +106,7 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-                    publishers = listPublishers(conn, true);
+                    publishers = listNames(conn, true, "publishername","publishers");
                     System.out.println("\nPublisher Name");
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.println(publishers.get(i));
@@ -112,7 +115,7 @@ public class Cecs323JDBC {
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
-                    publishers = listPublishers(conn, false);
+                    publishers = listNames(conn, true, "publishername","publishers");
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(publishers.get(i));
@@ -122,9 +125,9 @@ public class Cecs323JDBC {
                     try{
                         sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
                                 + "WHERE publishername = '" + publishers.get(mOption) + "'";
-                        Statement stmt = conn.createStatement();
+                        stmt = conn.prepareStatement(sql);
                         System.out.println();
-                        ResultSet rs = executeQuery(conn, stmt, sql, true);
+                        ResultSet rs = executeQuery(conn, stmt,true);
                         System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -145,10 +148,10 @@ public class Cecs323JDBC {
                     break;
                 case 5:
                     // List all book titles NAME ONLY
-                    try{
+                    /**try{
                         sql = "SELECT bookTitle FROM Books";
                         Statement stmt = conn.createStatement();
-                        ResultSet rs = executeQuery(conn, stmt, sql, true);
+                        ResultSet rs = executeQuery(conn, sql, true);
                         
                         System.out.println("\nBook Title");
                         while (rs.next()) {
@@ -163,7 +166,8 @@ public class Cecs323JDBC {
                     } catch (Exception e) {
                         //Handle errors for Class.forName
                         e.printStackTrace();
-                    }
+                    }**/
+                    books = listNames(conn, true, "booktitle", "Books");
                     mOption = 5;
                     break;
                 case 6:
@@ -357,20 +361,20 @@ public class Cecs323JDBC {
         }
     }
     
-    public static ArrayList<String> listWriters(Connection conn, boolean showConnecting, String name, String table){
+    public static ArrayList<String> listNames(Connection conn, boolean showConnecting, String name, String table){
         PreparedStatement psmt;
         ArrayList<String> groups = new ArrayList<String>();
         try{
-            String sql = "SELECT groupname FROM WritingGroups";
+            String sql = "SELECT " +name + " FROM " + table;
             psmt = conn.prepareStatement(sql);
             ResultSet rs = psmt.executeQuery();
                     //executeQuery(conn, stmt, sql, showConnecting);
             while (rs.next()) {
                 //Retrieve by column name
-                String gname = rs.getString("groupname");
+                String listedname = rs.getString(name);
                 //Display values
                 //System.out.println(dispNull(gname));
-                groups.add(dispNull(gname));
+                groups.add(dispNull(listedname));
             }
         }catch (SQLException se) {
             //Handle errors for JDBC
@@ -382,12 +386,12 @@ public class Cecs323JDBC {
         return groups;
     }
     
-    public static ArrayList<String> listPublishers(Connection conn, boolean showConnecting){
+    /**public static ArrayList<String> listPublishers(Connection conn, boolean showConnecting){
         ArrayList<String> publishers = new ArrayList<String>();
         try{
             String sql = "SELECT publishername FROM Publishers";
             Statement stmt = conn.createStatement();
-            ResultSet rs = executeQuery(conn, stmt, sql, showConnecting);
+            ResultSet rs = executeQuery(conn, stmt, showConnecting);
             while (rs.next()) {
                 //Retrieve by column name
                 String pname = rs.getString("publishername");
@@ -403,7 +407,7 @@ public class Cecs323JDBC {
             e.printStackTrace();
         }
         return publishers;
-    }
+    }**/
 }
 
 
