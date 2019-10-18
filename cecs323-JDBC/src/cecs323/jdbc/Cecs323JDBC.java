@@ -28,7 +28,7 @@ public class Cecs323JDBC {
     //strings, but that won't always be the case.
     static final String displayFormatWriter ="%-25s%-25s%-20s%-20s\n";
     static final String displayFormatPublisher ="%-25s%-25s%-25s%-25s\n";
-    static final String displayFormatBook ="%-25s%-25s%-25s%-25s%-25s\n";
+    static final String displayFormatBook ="%-25s%-25s%-25s%-25s%-25s%-20s%-20s%-25s%-25s%-25s%-25s\n";
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -47,13 +47,6 @@ public class Cecs323JDBC {
         ArrayList<String> books = new ArrayList<String>();
         
         PreparedStatement pstmt;
-        
-        /*PreparedStatement listNames;
-        try {
-            listNames = conn.prepareStatement("SELECT = ? FROM = ?");
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }*/
                 
         // Begin Menu Loop
         while(!quit){
@@ -165,25 +158,39 @@ public class Cecs323JDBC {
                         System.out.println(books.get(i));
                     }
                     System.out.println();
-                    mOption = getIntBetween(menuIn, 1, books.size(), "Select Writing Group") - 1;
+                    mOption = getIntBetween(menuIn, 1, books.size(), "Select Book") - 1;
                     try{
-                        sql = "SELECT groupname, publishername, booktitle, yearpublished, numberpages FROM Books "
-                                + "WHERE booktitle = ?";
-                        
+                        sql = "SELECT booktitle, yearpublished, numberpages, "
+                                + "groupname, headwriter, yearformed, subject, "
+                                + "publishername, publisheraddress, publisherphone, publisheremail "
+                                + "FROM Books b " 
+                                + "NATURAL JOIN writingGroups w "
+                                + "NATURAL JOIN publishers p "
+                                + "WHERE booktitle = ? AND w.groupname = b.groupname";
                         pstmt = conn.prepareStatement(sql);
                         pstmt.setString(1, books.get(mOption));
                         
                         System.out.println();
                         ResultSet rs = executeQ(conn, pstmt, true);
-                        System.out.printf(displayFormatBook, "\nGroup Name", "Publishername", "Book Title", "Year Published", "Number Pages");
+                        System.out.printf(displayFormatBook, "\nBook Title", "Year Published", "Number Pages", 
+                                "Group Name", "Head Writer", "Year Formed", "Subject",
+                                "Publisher Name", "Publisher Address", "Publisher Phone", "Publisher Email");
                         while (rs.next()) {
                             //Retrieve by column name
-                            String gname = rs.getString("groupname");
-                            String pname = rs.getString("publishername");
                             String btitle = rs.getString("booktitle");
                             String ypublished = rs.getString("yearpublished");
                             String nPages = rs.getString("numberpages");
-                            System.out.printf(displayFormatBook, dispNull(gname), dispNull(pname), dispNull(btitle), dispNull(ypublished), dispNull(nPages));
+                            String gname = rs.getString("groupname");
+                            String hwriter = rs.getString("headwriter");
+                            String yFormed = rs.getString("yearformed");
+                            String sub = rs.getString("subject");
+                            String pname = rs.getString("publishername");
+                            String padd = rs.getString("publisheraddress");
+                            String pphone = rs.getString("publisherphone");
+                            String pemail = rs.getString("publisheremail");
+                            System.out.printf(displayFormatBook, dispNull(btitle), dispNull(ypublished), dispNull(nPages),
+                                                dispNull(gname), dispNull(hwriter), dispNull(yFormed), dispNull(sub),
+                                                dispNull(pname), dispNull(padd), dispNull(pphone), dispNull(pemail));
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
