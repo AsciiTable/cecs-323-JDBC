@@ -63,7 +63,7 @@ public class Cecs323JDBC {
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
-                    writers = listNames(conn, true, "groupName", "WritingGroups");
+                    listNames(conn, true, "groupName", "WritingGroups", writers);
                     System.out.println("\nGroup Name");
                     for(int i = 0; i < writers.size(); i++){
                         System.out.println(writers.get(i));
@@ -72,7 +72,7 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
-                    writers = listNames(conn, true, "groupName", "WritingGroups");
+                    listNames(conn, true, "groupName", "WritingGroups", writers);
                     for(int i = 0; i < writers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(writers.get(i));
@@ -106,7 +106,7 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-                    publishers = listNames(conn, true, "publishername","publishers");
+                    listNames(conn, true, "publishername","publishers", publishers);
                     System.out.println("\nPublisher Name");
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.println(publishers.get(i));
@@ -115,7 +115,7 @@ public class Cecs323JDBC {
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
-                    publishers = listNames(conn, true, "publishername","publishers");
+                    listNames(conn, true, "publishername","publishers", publishers);
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(publishers.get(i));
@@ -167,7 +167,11 @@ public class Cecs323JDBC {
                         //Handle errors for Class.forName
                         e.printStackTrace();
                     }**/
-                    books = listNames(conn, true, "booktitle", "Books");
+                    listNames(conn, true, "booktitle", "Books", books);
+                    for(int i = 0; i < books.size(); i++){
+                        System.out.println(books.get(i));
+                    }
+
                     mOption = 5;
                     break;
                 case 6:
@@ -361,9 +365,9 @@ public class Cecs323JDBC {
         }
     }
     
-    public static ArrayList<String> listNames(Connection conn, boolean showConnecting, String name, String table){
+    public static void listNames(Connection conn, boolean showConnecting, String name, String table, ArrayList<String> groups){
         PreparedStatement psmt;
-        ArrayList<String> groups = new ArrayList<String>();
+        groups.clear();
         try{
             String sql = "SELECT " +name + " FROM " + table;
             psmt = conn.prepareStatement(sql);
@@ -383,7 +387,6 @@ public class Cecs323JDBC {
             //Handle errors for Class.forName
             e.printStackTrace();
         }
-        return groups;
     }
     
     /**public static ArrayList<String> listPublishers(Connection conn, boolean showConnecting){
