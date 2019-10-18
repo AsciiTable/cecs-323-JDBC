@@ -28,6 +28,7 @@ public class Cecs323JDBC {
     //strings, but that won't always be the case.
     static final String displayFormatWriter ="%-25s%-25s%-20s%-20s\n";
     static final String displayFormatPublisher ="%-25s%-25s%-25s%-25s\n";
+    static final String displayFormatBook ="%-25s%-25s%-25s%-25s%-25s\n";
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -60,10 +61,15 @@ public class Cecs323JDBC {
             printMenu();
             mOption = getIntBetween(menuIn, 1, 10, "Menu Selection");
             System.out.println();
+            
+            // Make sure that all ArrayLists are updated by running through the queries
+            listNames(conn, true, "groupName", "WritingGroups", writers);
+            listNames(conn, true, "publishername","publishers", publishers);
+            listNames(conn, true, "booktitle", "Books", books);
+            
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
-                    listNames(conn, true, "groupName", "WritingGroups", writers);
                     System.out.println("\nGroup Name");
                     for(int i = 0; i < writers.size(); i++){
                         System.out.println(writers.get(i));
@@ -72,7 +78,6 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
-                    listNames(conn, true, "groupName", "WritingGroups", writers);
                     for(int i = 0; i < writers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(writers.get(i));
@@ -106,7 +111,7 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-                    listNames(conn, true, "publishername","publishers", publishers);
+
                     System.out.println("\nPublisher Name");
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.println(publishers.get(i));
@@ -115,7 +120,6 @@ public class Cecs323JDBC {
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
-                    listNames(conn, true, "publishername","publishers", publishers);
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(publishers.get(i));
@@ -148,17 +152,35 @@ public class Cecs323JDBC {
                     break;
                 case 5:
                     // List all book titles NAME ONLY
-                    /**try{
-                        sql = "SELECT bookTitle FROM Books";
-                        Statement stmt = conn.createStatement();
-                        ResultSet rs = executeQuery(conn, sql, true);
+                    for(int i = 0; i < books.size(); i++){
+                        System.out.println(books.get(i));
+                    }
+                    mOption = 5;
+                    break;
+                case 6:
+                    // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
+                    for(int i = 0; i < books.size(); i++){
+                        System.out.print((i+1)+". ");
+                        System.out.println(books.get(i));
+                    }
+                    System.out.println();
+                    mOption = getIntBetween(menuIn, 1, writers.size(), "Select Writing Group") - 1;
+                    try{
+                        sql = "SELECT groupname, publishername, booktitle, yearpublished, numberpages FROM WritingGroups "
+                                + "WHERE groupname = ?" + writers.get(mOption) + "'";
+                        stmt = conn.prepareStatement(sql);
                         
-                        System.out.println("\nBook Title");
+                        System.out.println();
+                        ResultSet rs = executeQuery(conn, stmt, true);
+                        System.out.printf(displayFormatBook, "\nGroup Name", "Publishername", "Book Title", "Year Published", "Number Pages");
                         while (rs.next()) {
                             //Retrieve by column name
-                            String bname = rs.getString("bookTitle");
-                            //Display values
-                            System.out.println(dispNull(bname));
+                            String gname = rs.getString("groupname");
+                            String pname = rs.getString("publishername");
+                            String btitle = rs.getString("booktitle");
+                            String ypublished = rs.getString("yearpublished");
+                            String nPages = rs.getString("numberpages");
+                            System.out.printf(displayFormatBook, dispNull(gname), dispNull(pname), dispNull(btitle), dispNull(ypublished), dispNull(nPages));
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -166,16 +188,7 @@ public class Cecs323JDBC {
                     } catch (Exception e) {
                         //Handle errors for Class.forName
                         e.printStackTrace();
-                    }**/
-                    listNames(conn, true, "booktitle", "Books", books);
-                    for(int i = 0; i < books.size(); i++){
-                        System.out.println(books.get(i));
                     }
-
-                    mOption = 5;
-                    break;
-                case 6:
-                    // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
                     mOption = 6;
                     break;
                 case 7:
