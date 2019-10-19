@@ -224,12 +224,17 @@ public class Cecs323JDBC {
                         //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
                         sql = "INSERT INTO books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
                                 "(?, ?, ?, ?, ?)";
+                        String strIn = "";
+                        int intIn = -1;
+                        
                         pstmt = conn.prepareStatement(sql);
                         // Get String
                         // Get String
                         // Get String
                         // Get Positive Int under 10000
+                        mOption = getIntBetween(menuIn, 0, 9999, "Year Published");
                         // Get Positive Int
+                        
                         
                         pstmt.setString(1, books.get(mOption));
                         
@@ -423,6 +428,15 @@ public class Cecs323JDBC {
         return mOption;
     }
     
+    public static String getValidString(Scanner mIn, int maxLen, String prompt){
+        String store = "";
+        boolean valid = false;
+        while(!valid){
+            System.out.print(prompt +": ");
+        }
+        return store;
+    }
+    
     public static void copyList(ArrayList<String> o, ArrayList<String> c){
         for(int i = 0; i < o.size(); i++){
             c.set(i, o.get(i));
@@ -460,29 +474,6 @@ public class Cecs323JDBC {
         }
         return false;
     }
-    
-    /**public static ArrayList<String> listPublishers(Connection conn, boolean showConnecting){
-        ArrayList<String> publishers = new ArrayList<String>();
-        try{
-            String sql = "SELECT publishername FROM Publishers";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = executeQuery(conn, stmt, showConnecting);
-            while (rs.next()) {
-                //Retrieve by column name
-                String pname = rs.getString("publishername");
-                //Display values
-                //System.out.println(dispNull(pname));
-                publishers.add(dispNull(pname));
-            }
-        }catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-        return publishers;
-    }**/
 }
 
 
