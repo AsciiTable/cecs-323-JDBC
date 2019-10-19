@@ -433,6 +433,14 @@ public class Cecs323JDBC {
         boolean valid = false;
         while(!valid){
             System.out.print(prompt +": ");
+            store = mIn.next();
+            if(store.length() <= maxLen && store.length() != 0){
+                valid = true;
+                return store;
+            }else{
+                System.out.println("Invalid Input. Please enter string less than " + maxLen + " characters in length.");
+                mIn.next();
+            }
         }
         return store;
     }
