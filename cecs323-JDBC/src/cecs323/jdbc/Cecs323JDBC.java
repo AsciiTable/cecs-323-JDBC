@@ -225,6 +225,11 @@ public class Cecs323JDBC {
                         sql = "INSERT INTO books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
                                 "(?, ?, ?, ?, ?)";
                         pstmt = conn.prepareStatement(sql);
+                        // Get String
+                        // Get String
+                        // Get String
+                        // Get Positive Int under 10000
+                        // Get Positive Int
                         
                         pstmt.setString(1, books.get(mOption));
                         
