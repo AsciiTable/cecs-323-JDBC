@@ -63,6 +63,9 @@ public class Cecs323JDBC {
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
+                    if(checkEmpty(writers, "writing group"))
+                        break;
+                    
                     System.out.println("\nGroup Name");
                     for(int i = 0; i < writers.size(); i++){
                         System.out.println(writers.get(i));
@@ -71,6 +74,9 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
+                    if(checkEmpty(writers, "writing group"))
+                        break;
+                    
                     for(int i = 0; i < writers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(writers.get(i));
@@ -104,7 +110,9 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-
+                    if(checkEmpty(publishers, "publisher"))
+                        break;
+                    
                     System.out.println("\nPublisher Name");
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.println(publishers.get(i));
@@ -113,6 +121,9 @@ public class Cecs323JDBC {
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
+                    if(checkEmpty(publishers, "publisher"))
+                        break;
+                    
                     for(int i = 0; i < publishers.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(publishers.get(i));
@@ -146,6 +157,9 @@ public class Cecs323JDBC {
                     break;
                 case 5:
                     // List all book titles NAME ONLY
+                    if(checkEmpty(books, "book"))
+                        break;
+                    
                     for(int i = 0; i < books.size(); i++){
                         System.out.println(books.get(i));
                     }
@@ -153,6 +167,8 @@ public class Cecs323JDBC {
                     break;
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
+                    if(checkEmpty(books, "book"))
+                        break;
                     for(int i = 0; i < books.size(); i++){
                         System.out.print((i+1)+". ");
                         System.out.println(books.get(i));
@@ -203,6 +219,24 @@ public class Cecs323JDBC {
                     break;
                 case 7:
                     // Insert a new book
+                    try{
+                        //insert into customers (first_name, last_name, phone, street, zipcode)
+                        //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
+                        sql = "INSERT INTO books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
+                                "(?, ?, ?, ?, ?)";
+                        pstmt = conn.prepareStatement(sql);
+                        
+                        pstmt.setString(1, books.get(mOption));
+                        
+                        System.out.println();
+                        ResultSet rs = executeQ(conn, pstmt, true);
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
                     mOption = 7;
                     break;
                 case 8:
@@ -214,6 +248,8 @@ public class Cecs323JDBC {
                     break;
                 case 9:
                     // Remove a book specified by a user 
+                    if(checkEmpty(books, "book"))
+                        break;
                     mOption = 9;
                     break;
                 default:
@@ -410,6 +446,14 @@ public class Cecs323JDBC {
             //Handle errors for Class.forName
             e.printStackTrace();
         }
+    }
+    
+    public static boolean checkEmpty(ArrayList<String> list, String name){
+        if(list.size() == 0){
+            System.out.println("There is no " + name + " data to show!.");
+            return true;
+        }
+        return false;
     }
     
     /**public static ArrayList<String> listPublishers(Connection conn, boolean showConnecting){
