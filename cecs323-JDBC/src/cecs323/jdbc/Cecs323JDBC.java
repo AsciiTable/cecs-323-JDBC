@@ -229,6 +229,7 @@ public class Cecs323JDBC {
                         
                         pstmt = conn.prepareStatement(sql);
                         // Get String
+                        strIn = getValidString(menuIn, 30, "Writing Group:", true, writers);
                         // Get String
                         // Get String
                         // Get Positive Int under 10000
@@ -428,13 +429,26 @@ public class Cecs323JDBC {
         return mOption;
     }
     
-    public static String getValidString(Scanner mIn, int maxLen, String prompt){
+    public static String getValidString(Scanner mIn, int maxLen, String prompt, boolean preex, ArrayList<String> arr){
         String store = "";
         boolean valid = false;
         while(!valid){
             System.out.print(prompt +": ");
             store = mIn.next();
             if(store.length() <= maxLen && store.length() != 0){
+                if(preex){
+                    for(int i = 0; i < arr.size(); i++){
+                        if(store.equals(arr.get(i))){
+                            valid = true;
+                            return store;
+                        }
+                    }
+                    System.out.println("This " + prompt + " does not exist. Please enter a pre-existing " + prompt +".");
+                    
+                }
+                else{
+                    
+                }
                 valid = true;
                 return store;
             }else{
