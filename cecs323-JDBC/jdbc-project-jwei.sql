@@ -16,13 +16,13 @@
     Holds the name of the group, the head writer, the founding year, and the subject the group writes about.*/
 CREATE TABLE WritingGroups(
     /*GroupName: The name used to uniquely identify a group of authors*/
-    GroupName varchar(30) NOT NULL,
+    GroupName varchar(25) NOT NULL,
     /*HeadWriter: The head author of the book, the one who is explicitly named first*/
-    HeadWriter varchar(50) NOT NULL,
+    HeadWriter varchar(25) NOT NULL,
     /*YearFormed: The year in which the group was formed*/
     YearFormed int NOT NULL,
     /*Subject: The genere in which the the book belongs to*/
-    Subject varchar(30) NOT NULL,
+    Subject varchar(25) NOT NULL,
     CONSTRAINT writinggroups_pk PRIMARY KEY (GroupName)
 );
 
@@ -30,13 +30,13 @@ CREATE TABLE WritingGroups(
     Holds the name, address, phone number, and email of the publisher.*/
 CREATE TABLE Publishers(
     /*PublisherName: The name used to uniquely identify a publishing company*/
-    PublisherName varchar(50) NOT NULL,
+    PublisherName varchar(25) NOT NULL,
     /*PublisherAddress: The address at which the publishing company is located*/
-    PublisherAddress varchar(70) NOT NULL,
+    PublisherAddress varchar(25) NOT NULL,
     /*PublisherPhone: The phone number that the publisher can be contacted at*/
     PublisherPhone varchar(11) NOT NULL,
     /*PublisherEmail: The email that the publisher can be contacted at */
-    PublisherEmail varchar(50) NOT NULL,
+    PublisherEmail varchar(25) NOT NULL,
     CONSTRAINT publishers_pk PRIMARY KEY (PublisherName)
 );
 
@@ -44,11 +44,11 @@ CREATE TABLE Publishers(
     Holds the title of the book, the year it was published, the number of pages it has, the author group name, and the publisher name.*/
 CREATE TABLE Books(
      /*GroupName: The name used to uniquely identify the group of authors that wrote this book*/
-    GroupName varchar(30) NOT NULL,
+    GroupName varchar(25) NOT NULL,
     /*PublisherName: The name used to uniquely identify the publishing company that published this book*/
-    PublisherName varchar(50) NOT NULL,
+    PublisherName varchar(25) NOT NULL,
     /*BookTitle: The name that the book is refered to by*/
-    BookTitle varchar(50) NOT NULL,
+    BookTitle varchar(25) NOT NULL,
     /*YearPublished: The year in which the authors and publishers published the book*/
     YearPublished int NOT NULL,
     /*NumberPages: The number of pages that the book holds in total*/
@@ -80,7 +80,7 @@ INSERT INTO Publishers(publishername, publisheraddress, publisherphone, publishe
 ('WorldHello', '0000 Galaxy Avenue', '10000000000', 'earth@galaxy.org'),
 ('Make Believe', '9239 Rainbow Road', '1231232345', 'dreamstarters@imail.com'),
 ('Eeveeloutions', '3241 Pallet Town', '19092931235', 'profoak@catchemall.com'),
-('TenTen Prints', '1010 Perfect Street', '11010101010', 'perfection1010@plushie.org'),
+('TenTen Prints', '1010 Perfect Street', '11010101010', 'perfection10@plushie.org'),
 ('Blue Bunny', '3453 Fun Avenue', '14343943753', 'funplayfun@plushie.org'),
 ('Mini Duc', '5755 Grass Land', '14086963049', 'miniduc@plushie.org'),
 ('Sweet Prints', '1383 Candy Road', '19432034932', 'sweetprints@gmail.com'),

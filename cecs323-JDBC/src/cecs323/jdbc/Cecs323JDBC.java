@@ -26,9 +26,9 @@ public class Cecs323JDBC {
     //The number indicates how wide to make the field.
     //The "s" denotes that it's a string.  All of our output in this test are 
     //strings, but that won't always be the case.
-    static final String displayFormatWriter ="%-25s%-25s%-20s%-20s\n";
-    static final String displayFormatPublisher ="%-25s%-25s%-25s%-25s\n";
-    static final String displayFormatBook ="%-25s%-25s%-25s%-25s%-25s%-20s%-20s%-25s%-25s%-25s%-25s\n";
+    static final String displayFormatWriter ="%-28s%-28s%-28s%-28s\n";
+    static final String displayFormatPublisher ="%-28s%-28s%-28s%-28s\n";
+    static final String displayFormatBook ="%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s\n";
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -428,6 +428,7 @@ public class Cecs323JDBC {
             System.out.print(prompt + ": ");
             if(mIn.hasNextInt()){
                 mOption = mIn.nextInt();
+                mIn.nextLine();
                 if(mOption > (min-1) && mOption < (max+1)){
                     valid = true;
                     return mOption;
@@ -450,6 +451,7 @@ public class Cecs323JDBC {
             System.out.print(prompt + ": ");
             if(mIn.hasNextInt()){
                 mOption = mIn.nextInt();
+                mIn.nextLine();
                 if(mOption > -1){
                     valid = true;
                     return mOption;
