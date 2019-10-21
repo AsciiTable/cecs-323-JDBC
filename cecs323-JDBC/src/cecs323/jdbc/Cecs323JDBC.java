@@ -20,19 +20,13 @@ public class Cecs323JDBC {
     static final String cDB = "clientdriver";
     static final String cUSER = "jessicawei";
     static final String cPASS = "password";
-    //This is the specification for the printout that I'm doing:
-    //each % denotes the start of a new field.
-    //The - denotes left justification.
-    //The number indicates how wide to make the field.
-    //The "s" denotes that it's a string.  All of our output in this test are 
-    //strings, but that won't always be the case.
+
     static final String displayFormatWriter ="%-28s%-28s%-28s%-28s\n";
     static final String displayFormatPublisher ="%-28s%-28s%-28s%-28s\n";
     static final String displayFormatBook ="%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s\n";
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static String DB_URL = "jdbc:derby://localhost:1527/";
-    //            + "testdb;user=";
     
     public static void main(String[] args) {
         login();
@@ -66,9 +60,24 @@ public class Cecs323JDBC {
                     if(checkEmpty(writers, "writing group"))
                         break;
                     
-                    System.out.println("\nGroup Name");
-                    for(int i = 0; i < writers.size(); i++){
-                        System.out.println(writers.get(i));
+                    try{
+                        sql = "SELECT groupname FROM WritingGroups";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nGroup Name");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String gname = rs.getString("groupname");
+                            System.out.println(dispNull(gname));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
                     }
                     mOption = 1;
                     break;
@@ -77,19 +86,30 @@ public class Cecs323JDBC {
                     if(checkEmpty(writers, "writing group"))
                         break;
                     
-                    for(int i = 0; i < writers.size(); i++){
-                        System.out.print((i+1)+". ");
-                        System.out.println(writers.get(i));
-                    }
-                    System.out.println();
-                    mOption = getIntBetween(menuIn, 1, writers.size(), "Select Writing Group") - 1;
                     try{
+                        sql = "SELECT groupname FROM WritingGroups";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nGroup Name");
+                        int i = 0;
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String gname = rs.getString("groupname");
+                            System.out.println((i+1) + "." +dispNull(gname));
+                            i++;
+                        }
+                        
+                        System.out.println();
+                        mOption = getIntBetween(menuIn, 1, writers.size(), "Select Writing Group") - 1;
+                        
                         sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
                                 + "WHERE groupname = '" + writers.get(mOption) + "'";
                         pstmt = conn.prepareStatement(sql);
                         
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        rs = executeQ(conn, pstmt, true, false);
                         System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -114,8 +134,24 @@ public class Cecs323JDBC {
                         break;
                     
                     System.out.println("\nPublisher Name");
-                    for(int i = 0; i < publishers.size(); i++){
-                        System.out.println(publishers.get(i));
+                    try{
+                        sql = "SELECT publishername FROM Publishers";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nPublisher Name");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String pname = rs.getString("publishername");
+                            System.out.println(dispNull(pname));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
                     }
                     mOption = 3;
                     break;
@@ -124,19 +160,30 @@ public class Cecs323JDBC {
                     if(checkEmpty(publishers, "publisher"))
                         break;
                     
-                    for(int i = 0; i < publishers.size(); i++){
-                        System.out.print((i+1)+". ");
-                        System.out.println(publishers.get(i));
-                    }
-                    System.out.println();
-                    mOption = getIntBetween(menuIn, 1, publishers.size(), "Select Publisher") - 1;
                     try{
+                        sql = "SELECT publishername FROM Publishers";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nPublisher Name");
+                        int i = 0;
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String pname = rs.getString("publishername");
+                            System.out.println((i+1) + "." +dispNull(pname));
+                            i++;
+                        }
+                        
+                        System.out.println();
+                        mOption = getIntBetween(menuIn, 1, publishers.size(), "Select Publisher") - 1;
+                    
                         sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
                                 + "WHERE publishername = ?";
                         pstmt = conn.prepareStatement(sql);
                         pstmt.setString(1, publishers.get(mOption));
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt,true, false);
+                        rs = executeQ(conn, pstmt,true, false);
                         System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -160,8 +207,25 @@ public class Cecs323JDBC {
                     if(checkEmpty(books, "book"))
                         break;
                     
-                    for(int i = 0; i < books.size(); i++){
-                        System.out.println(books.get(i));
+                    System.out.println("\nPublisher Name");
+                    try{
+                        sql = "SELECT booktitle FROM Books";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nBook Title");
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String btitle = rs.getString("booktitle");
+                            System.out.println(dispNull(btitle));
+                        }
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
                     }
                     mOption = 5;
                     break;
@@ -173,9 +237,25 @@ public class Cecs323JDBC {
                         System.out.print((i+1)+". ");
                         System.out.println(books.get(i));
                     }
-                    System.out.println();
-                    mOption = getIntBetween(menuIn, 1, books.size(), "Select Book") - 1;
+                    
                     try{
+                        sql = "SELECT booktitle FROM Books";
+                        pstmt = conn.prepareStatement(sql);
+                        System.out.println();
+                        
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        System.out.println("\nBook Title");
+                        int i = 0;
+                        while (rs.next()) {
+                            //Retrieve by column name
+                            String btitle = rs.getString("booktitle");
+                            System.out.println((i+1) + "." +dispNull(btitle));
+                            i++;
+                        }
+                        
+                        System.out.println();
+                        mOption = getIntBetween(menuIn, 1, books.size(), "Select Book") - 1;
+                        
                         sql = "SELECT booktitle, yearpublished, numberpages, "
                                 + "groupname, headwriter, yearformed, subject, "
                                 + "publishername, publisheraddress, publisherphone, publisheremail "
@@ -187,7 +267,7 @@ public class Cecs323JDBC {
                         pstmt.setString(1, books.get(mOption));
                         
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true, false);
+                        rs = executeQ(conn, pstmt, true, false);
                         System.out.printf(displayFormatBook, "\nBook Title", "Year Published", "Number Pages", 
                                 "Group Name", "Head Writer", "Year Formed", "Subject",
                                 "Publisher Name", "Publisher Address", "Publisher Phone", "Publisher Email");
@@ -251,7 +331,6 @@ public class Cecs323JDBC {
                             System.out.println("Duplicate Entry. Cannot Store into database.");
                         }
                         //Handle errors for JDBC
-                        //se.printStackTrace();
                     } catch (Exception e) {
                         //Handle errors for Class.forName
                         e.printStackTrace();
@@ -269,6 +348,17 @@ public class Cecs323JDBC {
                     // Remove a book specified by a user 
                     if(checkEmpty(books, "book"))
                         break;
+                    try{
+                        sql = "DELETE FROM Books WHERE booktitle = ? AND groupname = ?";
+                        pstmt = conn.prepareStatement(sql);
+                    }catch (SQLException se) {
+                        //Handle errors for JDBC
+                        se.printStackTrace();
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
+                    
                     mOption = 9;
                     break;
                 default:
@@ -390,9 +480,11 @@ public class Cecs323JDBC {
             }
             if(!updating)
                 rs = psmt.executeQuery();
-            else
+            else{
                 psmt.executeUpdate();
                 System.out.println("Complete.");
+            }
+                
         } catch (SQLException se) {
             if (se instanceof SQLIntegrityConstraintViolationException){
                 System.out.println("ERROR: Duplicate Entry. Cannot store into database.");
