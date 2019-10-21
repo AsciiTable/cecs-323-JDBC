@@ -49,11 +49,6 @@ public class Cecs323JDBC {
             mOption = getIntBetween(menuIn, 1, 10, "Menu Selection");
             System.out.println();
             
-            // Make sure that all ArrayLists are updated by running through the queries
-            listNames(conn, true, "groupName", "WritingGroups", writers);
-            listNames(conn, true, "publishername","publishers", publishers);
-            listNames(conn, true, "booktitle", "Books", books);
-            
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
@@ -145,9 +140,6 @@ public class Cecs323JDBC {
                     break;
                 case 4:
                     // List all the data for ONE publisher specified by the user
-                    if(checkEmpty(publishers, "publisher"))
-                        break;
-                    
                     try{
                         String check = getPublisherSelection(conn);
                         if(!check.equals("")){
@@ -256,6 +248,8 @@ public class Cecs323JDBC {
                 case 7:
                     // Insert a new book
                     try{
+                        boolean badWriter = false;
+                        boolean badPub = false;
                         //insert into customers (first_name, last_name, phone, street, zipcode)
                         //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
                         sql = "INSERT INTO Books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
@@ -265,13 +259,19 @@ public class Cecs323JDBC {
                         
                         pstmt = conn.prepareStatement(sql);
                         // Get Writing Group
-                        strIn = getValidString(menuIn, 25, "Writing Group", true, false, writers);
+                        strIn = getWriterSelection(conn);
+                        if(strIn.length() == 0){
+                            badWriter = true;
+                        }
                         pstmt.setString(1, strIn);
                         // Get Publisher
-                        strIn = getValidString(menuIn, 25, "Publisher", true, false, publishers);
+                        strIn = getPublisherSelection(conn);
+                        if(strIn.length() == 0){
+                            badPub = true;
+                        }
                         pstmt.setString(2, strIn);
                         // Get Title
-                        strIn = getValidString(menuIn, 25, "Title", false, true, books);
+                        strIn = getValidString(menuIn, 25, "Title");
                         pstmt.setString(3, strIn);
                         // Get Year
                         intIn = getIntBetween(menuIn, 0, 9999, "Year Published");
@@ -281,7 +281,14 @@ public class Cecs323JDBC {
                         pstmt.setInt(5, intIn);
                         
                         System.out.println();
-                        executeQ(conn, pstmt, true, true);
+                        if(!badWriter && !badPub)
+                            executeQ(conn, pstmt, true, true);
+                        else{
+                            if(badWriter)
+                                System.out.println("ERROR: Invalid Writing Group entry.");
+                            if(badPub)
+                                System.out.println("ERROR: Invalid Publisher entry.");
+                        }
                     }catch (SQLException se) {
                         if (se instanceof SQLIntegrityConstraintViolationException){
                             System.out.println("Duplicate Entry. Cannot Store into database.");
@@ -302,14 +309,12 @@ public class Cecs323JDBC {
                     break;
                 case 9:
                     // Remove a book specified by a user 
-                    if(checkEmpty(books, "book"))
-                        break;
                     try{
                         sql = "DELETE FROM Books WHERE booktitle = ? AND groupname = ?";
                         pstmt = conn.prepareStatement(sql);
                         String strIn = "";
                         
-                        strIn = getValidString(menuIn, 25, "Book Title", true, false, books);
+                        strIn = getValidString(menuIn, 25, "Book Title");
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -517,72 +522,20 @@ public class Cecs323JDBC {
         return mOption;
     }
     
-    public static String getValidString(Scanner mIn, int maxLen, String prompt, boolean preex, boolean isBook, ArrayList<String> arr){
+    public static String getValidString(Scanner mIn, int maxLen, String prompt){
         String store = "";
         boolean valid = false;
         while(!valid){
             System.out.print(prompt +": ");
             store = mIn.nextLine();
             if(store.length() <= maxLen && store.length() != 0){
-                if(preex){
-                    for(int i = 0; i < arr.size(); i++){
-                        if(store.equals(arr.get(i))){
-                            valid = true;
-                            return store;
-                        }
-                    }
-                    System.out.println("This " + prompt + " does not exist. Please enter a pre-existing " + prompt +".");
-                }
-                else if(!preex && !isBook){
-                    for(int i = 0; i < arr.size(); i++){
-                        if(store.equals(arr.get(i))){
-                            System.out.println("This " + prompt + " already exists. Please enter a non-existing " + prompt +".");
-                            break;
-                        }
-                        else if(i == arr.size() - 1 && !store.equals(arr.get(i))){
-                            valid = true;
-                            return store;
-                        }
-                    }
-                }else if(isBook){
-                    valid = true;
-                    return store;
-                }
+                valid = true;
+                return store;
             }else{
                 System.out.println("Invalid Input. Please enter string less than " + maxLen + " characters in length.");
             }
         }
         return store;
-    }
-    
-    public static void copyList(ArrayList<String> o, ArrayList<String> c){
-        for(int i = 0; i < o.size(); i++){
-            c.set(i, o.get(i));
-        }
-    }
-    
-    public static void listNames(Connection conn, boolean showConnecting, String name, String table, ArrayList<String> groups){
-        PreparedStatement psmt;
-        groups.clear();
-        try{
-            String sql = "SELECT " +name + " FROM " + table;
-            psmt = conn.prepareStatement(sql);
-            ResultSet rs = psmt.executeQuery();
-                    //executeQuery(conn, stmt, sql, showConnecting);
-            while (rs.next()) {
-                //Retrieve by column name
-                String listedname = rs.getString(name);
-                //Display values
-                //System.out.println(dispNull(gname));
-                groups.add(dispNull(listedname));
-            }
-        }catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
     }
     
     public static String getWriterSelection(Connection conn){
@@ -649,12 +602,5 @@ public class Cecs323JDBC {
             System.out.println("Invalid Book.");
         }
         return validBook;
-    }
-    public static boolean checkEmpty(ArrayList<String> list, String name){
-        if(list.size() == 0){
-            System.out.println("There is no " + name + " data to show!.");
-            return true;
-        }
-        return false;
     }
 }
