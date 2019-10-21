@@ -297,7 +297,7 @@ public class Cecs323JDBC {
                         System.out.println();
                         if(!badWriter && !badPub){
                             System.out.print("Creating Book... ");
-                            executeQ(conn, pstmt, true, true);
+                            executeQ(conn, pstmt, false, true);
                         } 
                         else{
                             if(badWriter)
@@ -506,8 +506,8 @@ public class Cecs323JDBC {
     }// end disconnectDB
 /**
  * Closes the Result Set and Statement to prevent memory leaks
- * @param pstmt
- * @param rs 
+ * @param pstmt the PreparedStatement to be closed
+ * @param rs the ResultSet to be closed
  */
     public static void cleanup(PreparedStatement pstmt, ResultSet rs){
         try {
@@ -530,7 +530,14 @@ public class Cecs323JDBC {
             }// nothing we can do; end finally try
         }//end try
     }// end cleanup
-    
+/**
+ * Executes the requested statement
+ * @param conn the Connection between the program and the database
+ * @param psmt the PreparedStatement to be executed
+ * @param showConnecting Whether to show "Creating statement..." or not
+ * @param updating If the prepared statement is an Update or just a View
+ * @return ResultSet the set of data received from executing the Query (is NULL if updating)
+ */
     public static ResultSet executeQ(Connection conn, PreparedStatement psmt, boolean showConnecting, boolean updating){
         ResultSet rs = null;
          //STEP 4: Execute a query 
@@ -556,8 +563,10 @@ public class Cecs323JDBC {
             e.printStackTrace();
         }
         return rs;
-    }
-    
+    }// end executeQ
+/**
+ * Prints the Main Menu Options
+ */
     public static void printMenu(){
         System.out.print("1. List all writing groups\n" +
                             "2. List all the data for one writing group\n"+
@@ -569,8 +578,15 @@ public class Cecs323JDBC {
                             "8. Insert new publisher\n"+
                             "9. Remove a book\n"+
                             "10. Quit\n\n");
-    }
-    
+    }// end printMenu
+/**
+ * Gets a valid integer between a given range from user input
+ * @param mIn the Scanner used to take in user input
+ * @param min the smallest valid input
+ * @param max the largest valid input
+ * @param prompt the String that the user sees to know what information to enter
+ * @return the valid int of choice
+ */    
     public static int getIntBetween(Scanner mIn, int min, int max, String prompt){
         int mOption = -1;
         boolean valid = false;
@@ -593,7 +609,13 @@ public class Cecs323JDBC {
             }
         }
         return mOption;
-    }
+    }// end getIntBetween
+/**
+ * Gets a positive integer from user input
+ * @param mIn the Scanner used to take in user input
+ * @param prompt the String that the user sees to know what information to enter
+ * @return the valid int of choice
+ */
     public static int getPositiveInt(Scanner mIn, String prompt){
         int mOption = -1;
         boolean valid = false;
@@ -616,8 +638,14 @@ public class Cecs323JDBC {
             }
         }
         return mOption;
-    }
-    
+    }// end getPositiveInt
+/**
+ * Gets a valid String from the user depending on its length
+ * @param mIn the Scanner used to take in user input
+ * @param maxLen the maximum length that the string can be
+ * @param prompt the String that the user sees to know what information to enter
+ * @return the valid string of choice
+ */
     public static String getValidString(Scanner mIn, int maxLen, String prompt){
         String store = "";
         boolean valid = false;
@@ -632,8 +660,14 @@ public class Cecs323JDBC {
             }
         }
         return store;
-    }
-    
+    }// end getValidString
+/**
+ * Gets a valid phone number from the user depending on length and content
+ * @param mIn the Scanner used to take in user input
+ * @param maxLen the maximum length that the phone number can be
+ * @param prompt the String that the user sees to know what information to enter
+ * @return the valid phone number of choice
+ */    
     public static String getValidPhone(Scanner mIn, int maxLen, String prompt){
         String store = "";
         boolean valid = false;
@@ -653,8 +687,12 @@ public class Cecs323JDBC {
             }
         }
         return store;
-    }
-    
+    }// end getValidPhone
+/**
+ * Gets a valid WritingGroup from the user depending on existence
+ * @param conn the Connection between the program and the database
+ * @return a String representation of the WriterGroup's name
+ */    
     public static String getWriterSelection(Connection conn){
         String validWriter = "";
         Scanner in = new Scanner(System.in);
@@ -675,7 +713,13 @@ public class Cecs323JDBC {
                 System.out.println("Invalid Group.");
             }
         return validWriter;
-    }
+    }// end getWriter Selection
+/**
+ * Gets a valid Publisher from the user depending on existence
+ * @param conn the Connection between the program and the database
+ * @param replaced if the publisher entered is to be replaced (prompt purposes only)
+ * @return a String representation of the Publisher's name
+ */
     public static String getPublisherSelection(Connection conn, boolean replaced){
         String validPublisher = "";
         Scanner in = new Scanner(System.in);
@@ -699,7 +743,12 @@ public class Cecs323JDBC {
             System.out.println("Invalid Publisher.");
         }
         return validPublisher;
-    }
+    }//end getPublisherSelection
+/**
+ * Gets a valid Book from the user depending on existence (name and writing group)
+ * @param conn the Connection between the program and the database
+ * @return a String[] representation of the Book title and WriterGroup name
+ */
     public static String[] getBookSelection(Connection conn){
         String[] validBook = new String[2];
         Scanner in = new Scanner(System.in);
@@ -722,5 +771,5 @@ public class Cecs323JDBC {
             System.out.println("Invalid Book.");
         }
         return validBook;
-    }
-}
+    }// end getBookSelection
+}// end Cecs323JDBC class
