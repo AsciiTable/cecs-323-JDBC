@@ -53,7 +53,7 @@ public class Cecs323JDBC {
                 case 1: 
                     // List all writing groups NAME ONLY
                     try{
-                        sql = "SELECT groupname FROM WritingGroups";
+                        sql = "SELECT groupname FROM WritingGroups ORDER BY groupname";
                         pstmt = conn.prepareStatement(sql);
                         System.out.println();
                         
@@ -111,10 +111,9 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-                    System.out.println("\nPublisher Name");
                     try{
                         int empty = 0;
-                        sql = "SELECT publishername FROM Publishers";
+                        sql = "SELECT publishername FROM Publishers ORDER BY publishername";
                         pstmt = conn.prepareStatement(sql);
                         System.out.println();
                         
@@ -172,7 +171,7 @@ public class Cecs323JDBC {
                     // List all book titles NAME ONLY
                     int empty = 0;
                     try{
-                        sql = "SELECT booktitle, groupname FROM Books";
+                        sql = "SELECT booktitle, groupname FROM Books ORDER BY booktitle";
                         pstmt = conn.prepareStatement(sql);
                         
                         System.out.println();
