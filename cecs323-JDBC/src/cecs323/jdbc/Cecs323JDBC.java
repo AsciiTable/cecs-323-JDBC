@@ -57,9 +57,6 @@ public class Cecs323JDBC {
             switch(mOption){
                 case 1: 
                     // List all writing groups NAME ONLY
-                    if(checkEmpty(writers, "writing group"))
-                        break;
-                    
                     try{
                         sql = "SELECT groupname FROM WritingGroups";
                         pstmt = conn.prepareStatement(sql);
@@ -76,7 +73,7 @@ public class Cecs323JDBC {
                             System.out.println(dispNull(gname));
                         }
                         if(emptyCheck)
-                            System.out.println("There was no WriterGroup data to print.");
+                            System.out.println("ERROR: No WriterGroup data to show!");
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -88,25 +85,25 @@ public class Cecs323JDBC {
                     break;
                 case 2:
                     // List all the data for ONE group specified by the user
-                    if(checkEmpty(writers, "writing group"))
-                        break;
-                    
                     try{
-                        sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
+                        String check = getWriterSelection(conn);
+                        if(!check.equals("")){
+                            sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
                                 + "WHERE groupname = ?";
-                        pstmt = conn.prepareStatement(sql);
-                        pstmt.setString(1, getWriterSelection(conn));
-                        
-                        System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true, false);
-                        System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
-                        while (rs.next()) {
-                            //Retrieve by column name
-                            String gname = rs.getString("groupname");
-                            String hwriter = rs.getString("headwriter");
-                            String yformed = rs.getString("yearformed");
-                            String subject = rs.getString("subject");
-                            System.out.printf(displayFormatWriter, dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
+                            pstmt = conn.prepareStatement(sql);
+                            pstmt.setString(1, check);
+
+                            System.out.println();
+                            ResultSet rs = executeQ(conn, pstmt, true, false);
+                            System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
+                            while (rs.next()) {
+                                //Retrieve by column name
+                                String gname = rs.getString("groupname");
+                                String hwriter = rs.getString("headwriter");
+                                String yformed = rs.getString("yearformed");
+                                String subject = rs.getString("subject");
+                                System.out.printf(displayFormatWriter, dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
+                            }
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -119,11 +116,9 @@ public class Cecs323JDBC {
                     break;
                 case 3:
                     // List all publishers NAME ONLY
-                    if(checkEmpty(publishers, "publisher"))
-                        break;
-                    
                     System.out.println("\nPublisher Name");
                     try{
+                        int empty = 0;
                         sql = "SELECT publishername FROM Publishers";
                         pstmt = conn.prepareStatement(sql);
                         System.out.println();
@@ -132,8 +127,12 @@ public class Cecs323JDBC {
                         System.out.println("\nPublisher Name");
                         while (rs.next()) {
                             //Retrieve by column name
+                            empty++;
                             String pname = rs.getString("publishername");
                             System.out.println(dispNull(pname));
+                        }
+                        if(empty == 0){
+                            System.out.println("ERROR: No Publisher data to show!");
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -150,20 +149,23 @@ public class Cecs323JDBC {
                         break;
                     
                     try{
-                        sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
+                        String check = getPublisherSelection(conn);
+                        if(!check.equals("")){
+                            sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
                                 + "WHERE publishername = ?";
-                        pstmt = conn.prepareStatement(sql);
-                        pstmt.setString(1, getPublisherSelection(conn));
-                        System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt,true, false);
-                        System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
-                        while (rs.next()) {
-                            //Retrieve by column name
-                            String pname = rs.getString("publishername");
-                            String paddress = rs.getString("publisheraddress");
-                            String pphone = rs.getString("publisherphone");
-                            String pemail = rs.getString("publisheremail");
-                            System.out.printf(displayFormatPublisher, dispNull(pname), dispNull(paddress), dispNull(pphone), dispNull(pemail));
+                            pstmt = conn.prepareStatement(sql);
+                            pstmt.setString(1, check);
+                            System.out.println();
+                            ResultSet rs = executeQ(conn, pstmt,true, false);
+                            System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
+                            while (rs.next()) {
+                                //Retrieve by column name
+                                String pname = rs.getString("publishername");
+                                String paddress = rs.getString("publisheraddress");
+                                String pphone = rs.getString("publisherphone");
+                                String pemail = rs.getString("publisheremail");
+                                System.out.printf(displayFormatPublisher, dispNull(pname), dispNull(paddress), dispNull(pphone), dispNull(pemail));
+                            }
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -199,14 +201,12 @@ public class Cecs323JDBC {
                         e.printStackTrace();
                     }
                     if(empty == 0){
-                        System.out.println("No data to show!");
+                        System.out.println("ERROR: No Book data to show!");
                     }
                     mOption = 5;
                     break;
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
-                    if(checkEmpty(books, "book"))
-                        break;
                     try{
                         String check = getBookSelection(conn);
                         
@@ -588,9 +588,7 @@ public class Cecs323JDBC {
     public static String getWriterSelection(Connection conn){
         String validWriter = "";
         Scanner in = new Scanner(System.in);
-        boolean valid = false;
-        while(!valid){
-            try{
+        try{
             String sql = "SELECT groupname FROM WritingGroups WHERE groupname = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             
@@ -599,46 +597,41 @@ public class Cecs323JDBC {
             pstmt.setString(1, validWriter);
             
             ResultSet rs = executeQ(conn, pstmt, false, false);
-            if(rs.next())
-                valid = true;
-            else
-                System.out.println("That group does not exist, please enter again.");
-
+            if(!rs.next()){
+                System.out.println("That group does not exist.");
+                validWriter = "";
+            }
             }catch (SQLException se) {
                 System.out.println("Invalid Group.");
             }
-        }
         return validWriter;
     }
     public static String getPublisherSelection(Connection conn){
         String validPublisher = "";
         Scanner in = new Scanner(System.in);
-        boolean valid = false;
-        while(!valid){
-            try{
-                String sql = "SELECT publishername FROM Publishers WHERE publishername = ?";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
+        try{
+            String sql = "SELECT publishername FROM Publishers WHERE publishername = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
 
-                System.out.print("Publisher: ");
-                validPublisher = in.nextLine();
-                pstmt.setString(1, validPublisher);
+            System.out.print("Publisher: ");
+            validPublisher = in.nextLine();
+            pstmt.setString(1, validPublisher);
 
-                ResultSet rs = executeQ(conn, pstmt, false, false);
-                if(rs.next())
-                    valid = true;
-                else
-                    System.out.println("That publisher does not exist, please enter again.");
-
-            }catch (SQLException se) {
-                System.out.println("Invalid Publisher.");
+            ResultSet rs = executeQ(conn, pstmt, false, false);
+            if(!rs.next()){
+                validPublisher = "";
+                System.out.println("That publisher does not exist.");
             }
+
+
+        }catch (SQLException se) {
+            System.out.println("Invalid Publisher.");
         }
         return validPublisher;
     }
     public static String getBookSelection(Connection conn){
         String validBook = "";
         Scanner in = new Scanner(System.in);
-        boolean valid = false;
         try{
             String sql = "SELECT booktitle FROM Books WHERE booktitle = ? AND groupname = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -648,9 +641,7 @@ public class Cecs323JDBC {
             pstmt.setString(1, validBook);
             pstmt.setString(2, getWriterSelection(conn));
             ResultSet rs = executeQ(conn, pstmt, false, false);
-            if(rs.next())
-                valid = true;
-            else{
+            if(!rs.next()){
                 validBook = "";
                 System.out.println("That book does not exist.");
             }
