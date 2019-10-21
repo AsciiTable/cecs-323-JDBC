@@ -7,25 +7,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Author:  Jessica Wei
- * Created: Oct 9, 2019
- * Due: Oct 21, 2019
+ * A class to access, view, and manage a Derby Database.
+ * Project: JDBC
+ * @author  Jessica Wei
+ * @version 1.01 Oct 21, 2019
  */
 public class Cecs323JDBC {
-    //  Database credentials
+    /*  Database credentials */
+    /* User entered Username */
     static String USER;
+    /* User entered Password */
     static String PASS;
+    /* User entered Database Name */
     static String DBNAME;
     // Required entries to access database 
+    /* Correct Database name*/
     static final String cDB = "clientdriver";
+    /* Correct Username */
     static final String cUSER = "jessicawei";
+    /* Correct Password */
     static final String cPASS = "password";
-
+    
+    /* Data Formatting */
+    /* Writing Group Data Format */
     static final String displayFormatWriter ="%-28s%-28s%-28s%-28s\n";
+    /* Publisher Data Format */
     static final String displayFormatPublisher ="%-28s%-28s%-28s%-28s\n";
+    /* Book Data Format*/
     static final String displayFormatBook ="%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s%-28s\n";
-    // JDBC driver name and database URL
+    /* JDBC driver name */
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
+    /* JDBC database URL */
     static String DB_URL = "jdbc:derby://localhost:1527/";
     
     public static void main(String[] args) {
@@ -35,10 +47,6 @@ public class Cecs323JDBC {
         boolean quit = false;
         int mOption = 0;
         String sql = "";
-        
-        ArrayList<String> writers = new ArrayList<String>();
-        ArrayList<String> publishers = new ArrayList<String>();
-        ArrayList<String> books = new ArrayList<String>();
         
         PreparedStatement pstmt;
                 
@@ -69,6 +77,7 @@ public class Cecs323JDBC {
                         }
                         if(emptyCheck)
                             System.out.println("ERROR: No WriterGroup data to show!");
+                        cleanup(pstmt, rs);
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -99,6 +108,7 @@ public class Cecs323JDBC {
                                 String subject = rs.getString("subject");
                                 System.out.printf(displayFormatWriter, dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
                             }
+                            cleanup(pstmt, rs);
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -128,6 +138,7 @@ public class Cecs323JDBC {
                         if(empty == 0){
                             System.out.println("ERROR: No Publisher data to show!");
                         }
+                        cleanup(pstmt, rs);
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -157,6 +168,7 @@ public class Cecs323JDBC {
                                 String pemail = rs.getString("publisheremail");
                                 System.out.printf(displayFormatPublisher, dispNull(pname), dispNull(paddress), dispNull(pphone), dispNull(pemail));
                             }
+                            cleanup(pstmt, rs);
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -185,6 +197,7 @@ public class Cecs323JDBC {
                             String gname = rs.getString("groupname");
                             System.out.println(dispNull(btitle) + " (By: " + dispNull(gname) + ")");
                         }
+                        cleanup(pstmt, rs);
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -235,6 +248,7 @@ public class Cecs323JDBC {
                                                     dispNull(gname), dispNull(hwriter), dispNull(yFormed), dispNull(sub),
                                                     dispNull(pname), dispNull(padd), dispNull(pphone), dispNull(pemail));
                             }
+                            cleanup(pstmt, rs);
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -290,6 +304,9 @@ public class Cecs323JDBC {
                                 System.out.println("ERROR: Invalid Writing Group entry.");
                             if(badPub)
                                 System.out.println("ERROR: Invalid Publisher entry.");
+                        }
+                        if (pstmt != null) {
+                            pstmt.close();
                         }
                     }catch (SQLException se) {
                         if (se instanceof SQLIntegrityConstraintViolationException){
@@ -350,7 +367,9 @@ public class Cecs323JDBC {
                         }
                         else
                             System.out.println("Invalid Publisher to be replaced.");
-                        
+                        if (pstmt != null) {
+                            pstmt.close();
+                        }
                     }catch (SQLException se) {
                         if (se instanceof SQLIntegrityConstraintViolationException){
                             System.out.println("Duplicate Entry. Cannot store entered Publisher into database.");
@@ -380,6 +399,9 @@ public class Cecs323JDBC {
                         }
                         else
                             System.out.println("ERROR: Invalid Book Title.");
+                        if (pstmt != null) {
+                            pstmt.close();
+                        }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -436,7 +458,9 @@ public class Cecs323JDBC {
         //Constructing the database URL connection string
         DB_URL = DB_URL + DBNAME + ";user="+ USER + ";password=" + PASS;
     }//end login
-    
+/**
+ * Connects to the Database at the beginning of the program
+ */
     public static Connection connectDB(){
         Connection conn = null; //initialize the connection
         try {
@@ -454,8 +478,11 @@ public class Cecs323JDBC {
             e.printStackTrace();
         }
         return conn;
-    }
-    
+    } // end connectDB
+/**
+ * Disconnects the Database at the end of the program
+ * @param conn the Connection object that connects the program to the database
+ */
     public static void disconnectDB(Connection conn){
         try {
             //STEP 6: Clean-up environment
@@ -476,13 +503,17 @@ public class Cecs323JDBC {
                 se.printStackTrace();
             }//end finally try
         }//end try
-    }
-    
-    public static void cleanup(Statement stmt, ResultSet rs){
+    }// end disconnectDB
+/**
+ * Closes the Result Set and Statement to prevent memory leaks
+ * @param pstmt
+ * @param rs 
+ */
+    public static void cleanup(PreparedStatement pstmt, ResultSet rs){
         try {
             //STEP 6: Clean-up environment
             rs.close();
-            stmt.close();
+            pstmt.close();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
@@ -492,13 +523,13 @@ public class Cecs323JDBC {
         } finally {
             //finally block used to close resources
             try {
-                if (stmt != null) {
-                    stmt.close();
+                if (pstmt != null) {
+                    pstmt.close();
                 }
             } catch (SQLException se2) {
             }// nothing we can do; end finally try
         }//end try
-    }
+    }// end cleanup
     
     public static ResultSet executeQ(Connection conn, PreparedStatement psmt, boolean showConnecting, boolean updating){
         ResultSet rs = null;
