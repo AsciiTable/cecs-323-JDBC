@@ -140,7 +140,7 @@ public class Cecs323JDBC {
                 case 4:
                     // List all the data for ONE publisher specified by the user
                     try{
-                        String check = getPublisherSelection(conn);
+                        String check = getPublisherSelection(conn, false);
                         if(!check.equals("")){
                             sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
                                 + "WHERE publishername = ?";
@@ -265,7 +265,7 @@ public class Cecs323JDBC {
                         }
                         pstmt.setString(1, strIn);
                         // Get Publisher
-                        strIn = getPublisherSelection(conn);
+                        strIn = getPublisherSelection(conn, false);
                         if(strIn.length() == 0){
                             badPub = true;
                         }
@@ -291,7 +291,7 @@ public class Cecs323JDBC {
                         }
                     }catch (SQLException se) {
                         if (se instanceof SQLIntegrityConstraintViolationException){
-                            System.out.println("Duplicate Entry. Cannot Store into database.");
+                            System.out.println("Duplicate Entry. Cannot store entered Book into database.");
                         }
                         //Handle errors for JDBC
                     } catch (Exception e) {
@@ -304,7 +304,58 @@ public class Cecs323JDBC {
                     // Insert a new publisher and update all books published by one publisher
                     // to be published by the new publisher. Leave the old publisher alone, just modify
                     // the books that they have published. Assume that the new publisher has bought out
-                    // the old one, so now any books published by the old publisher are publisehd by the new one
+                    // the old one, so now any books published by the old publisher are publishe sd by the new one
+                    try{
+                        boolean badPub = false;
+                        //insert into customers (first_name, last_name, phone, street, zipcode)
+                        //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
+                        sql = "INSERT INTO Publishers (publishername, publisheraddress, publisherphone, publisheremail) values "+
+                                "(?, ?, ?, ?)";
+                        String strIn = "";
+                        String newName = "";
+                        
+                        pstmt = conn.prepareStatement(sql);
+                        // Get Publisher
+                        strIn = getValidString(menuIn, 25, "Name");
+                        pstmt.setString(1, newName);
+                        // Get Address
+                        strIn = getValidString(menuIn, 25, "Address");
+                        pstmt.setString(2, strIn);
+                        // Get Phone
+                        strIn = getValidPhone(menuIn, 11, "Phone");
+                        pstmt.setString(3, strIn);
+                        // Get Email
+                        strIn = getValidString(menuIn, 25, "Email");
+                        pstmt.setString(4, strIn);
+                        
+                        // Get Replaced Publisher
+                        String replacedP = getPublisherSelection(conn, true);
+                        
+                        if(!replacedP.equals("")){
+                            executeQ(conn, pstmt, false, true);
+                            sql = "UPDATE Books SET publishername = ? WHERE publishername = ?";
+                            pstmt = conn.prepareStatement(sql);
+                            if(!newName.equals("")){
+                                pstmt.setString(1, newName);
+                                pstmt.setString(2, replacedP);
+                                executeQ(conn, pstmt, false, true);
+                            }
+                            else{
+                                System.out.println("Invalid Publisher name.");
+                            }
+                        }
+                        else
+                            System.out.println("Invalid Publisher to be replaced.");
+                        
+                    }catch (SQLException se) {
+                        if (se instanceof SQLIntegrityConstraintViolationException){
+                            System.out.println("Duplicate Entry. Cannot store entered Publisher into database.");
+                        }
+                        //Handle errors for JDBC
+                    } catch (Exception e) {
+                        //Handle errors for Class.forName
+                        e.printStackTrace();
+                    }
                     mOption = 8;
                     break;
                 case 9:
@@ -547,6 +598,27 @@ public class Cecs323JDBC {
         return store;
     }
     
+    public static String getValidPhone(Scanner mIn, int maxLen, String prompt){
+        String store = "";
+        boolean valid = false;
+        while(!valid){
+            System.out.print(prompt +": ");
+            store = mIn.nextLine();
+            if(store.length() == maxLen){
+                try{
+                    Long.parseLong(store);
+                    valid = true;
+                }catch (NumberFormatException nf){
+                    System.out.println("Invalid Input. Please enter a phone number with only digits.");
+                    valid = false;
+                }
+            }else{
+                System.out.println("Invalid Input. Please enter phone number " + maxLen + " digits in length.");
+            }
+        }
+        return store;
+    }
+    
     public static String getWriterSelection(Connection conn){
         String validWriter = "";
         Scanner in = new Scanner(System.in);
@@ -568,13 +640,14 @@ public class Cecs323JDBC {
             }
         return validWriter;
     }
-    public static String getPublisherSelection(Connection conn){
+    public static String getPublisherSelection(Connection conn, boolean replaced){
         String validPublisher = "";
         Scanner in = new Scanner(System.in);
         try{
             String sql = "SELECT publishername FROM Publishers WHERE publishername = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-
+            if(replaced)
+                System.out.print("Replaced ");
             System.out.print("Publisher: ");
             validPublisher = in.nextLine();
             pstmt.setString(1, validPublisher);
