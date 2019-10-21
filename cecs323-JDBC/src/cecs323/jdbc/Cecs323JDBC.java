@@ -215,7 +215,7 @@ public class Cecs323JDBC {
                     try{
                         String[] check = getBookSelection(conn);
                         
-                        if(!check.equals("")){
+                        if(!check[0].equals("")){
                             sql = "SELECT booktitle, yearpublished, numberpages, "
                                 + "groupname, headwriter, yearformed, subject, "
                                 + "publishername, publisheraddress, publisherphone, publisheremail "
