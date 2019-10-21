@@ -281,8 +281,10 @@ public class Cecs323JDBC {
                         pstmt.setInt(5, intIn);
                         
                         System.out.println();
-                        if(!badWriter && !badPub)
+                        if(!badWriter && !badPub){
+                            System.out.print("Creating Book... ");
                             executeQ(conn, pstmt, true, true);
+                        } 
                         else{
                             if(badWriter)
                                 System.out.println("ERROR: Invalid Writing Group entry.");
@@ -316,7 +318,7 @@ public class Cecs323JDBC {
                         
                         pstmt = conn.prepareStatement(sql);
                         // Get Publisher
-                        strIn = getValidString(menuIn, 25, "Name");
+                        newName = getValidString(menuIn, 25, "Name");
                         pstmt.setString(1, newName);
                         // Get Address
                         strIn = getValidString(menuIn, 25, "Address");
@@ -332,12 +334,14 @@ public class Cecs323JDBC {
                         String replacedP = getPublisherSelection(conn, true);
                         
                         if(!replacedP.equals("")){
+                            System.out.print("Creating publisher... ");
                             executeQ(conn, pstmt, false, true);
                             sql = "UPDATE Books SET publishername = ? WHERE publishername = ?";
                             pstmt = conn.prepareStatement(sql);
                             if(!newName.equals("")){
                                 pstmt.setString(1, newName);
                                 pstmt.setString(2, replacedP);
+                                System.out.print("Replacing publisher... ");
                                 executeQ(conn, pstmt, false, true);
                             }
                             else{
@@ -368,6 +372,7 @@ public class Cecs323JDBC {
                             pstmt.setString(1, bookCheck[0]);
                             if(!bookCheck[1].equals("")){
                                 pstmt.setString(2, bookCheck[1]);
+                                System.out.print("Removing Book... ");
                                 executeQ(conn, pstmt, false, true);
                             }
                             else
