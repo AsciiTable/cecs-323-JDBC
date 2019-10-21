@@ -87,29 +87,15 @@ public class Cecs323JDBC {
                         break;
                     
                     try{
-                        sql = "SELECT groupname FROM WritingGroups";
-                        pstmt = conn.prepareStatement(sql);
-                        System.out.println();
-                        
-                        ResultSet rs = executeQ(conn, pstmt, true, false);
-                        System.out.println("\nGroup Name");
-                        int i = 0;
-                        while (rs.next()) {
-                            //Retrieve by column name
-                            String gname = rs.getString("groupname");
-                            System.out.println((i+1) + "." +dispNull(gname));
-                            i++;
-                        }
-                        
-                        System.out.println();
-                        mOption = getIntBetween(menuIn, 1, writers.size(), "Select Writing Group") - 1;
+                        String selectedWriter = getWriterSelection(conn);
                         
                         sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
-                                + "WHERE groupname = '" + writers.get(mOption) + "'";
+                                + "WHERE groupname = ?";
                         pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, selectedWriter);
                         
                         System.out.println();
-                        rs = executeQ(conn, pstmt, true, false);
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
                         System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -309,13 +295,13 @@ public class Cecs323JDBC {
                         
                         pstmt = conn.prepareStatement(sql);
                         // Get Writing Group
-                        strIn = getValidString(menuIn, 30, "Writing Group", true, false, writers);
+                        strIn = getValidString(menuIn, 25, "Writing Group", true, false, writers);
                         pstmt.setString(1, strIn);
                         // Get Publisher
-                        strIn = getValidString(menuIn, 50, "Publisher", true, false, publishers);
+                        strIn = getValidString(menuIn, 25, "Publisher", true, false, publishers);
                         pstmt.setString(2, strIn);
                         // Get Title
-                        strIn = getValidString(menuIn, 50, "Title", false, true, books);
+                        strIn = getValidString(menuIn, 25, "Title", false, true, books);
                         pstmt.setString(3, strIn);
                         // Get Year
                         intIn = getIntBetween(menuIn, 0, 9999, "Year Published");
@@ -351,6 +337,9 @@ public class Cecs323JDBC {
                     try{
                         sql = "DELETE FROM Books WHERE booktitle = ? AND groupname = ?";
                         pstmt = conn.prepareStatement(sql);
+                        String strIn = "";
+                        
+                        strIn = getValidString(menuIn, 25, "Book Title", true, false, books);
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -624,6 +613,32 @@ public class Cecs323JDBC {
             //Handle errors for Class.forName
             e.printStackTrace();
         }
+    }
+    
+    public static String getWriterSelection(Connection conn){
+        String validWriter = "";
+        Scanner in = new Scanner(System.in);
+        boolean valid = false;
+        while(!valid){
+            try{
+            String sql = "SELECT groupname FROM WritingGroups WHERE groupname = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            
+            System.out.print("Writer: ");
+            validWriter = in.nextLine();
+            pstmt.setString(1, validWriter);
+            
+            ResultSet rs = executeQ(conn, pstmt, false, false);
+            if(rs.next())
+                valid = true;
+            else
+                System.out.println("That group does not exist, please enter again.");
+
+            }catch (SQLException se) {
+                System.out.println("Invalid Group.");
+            }
+        }
+        return validWriter;
     }
     
     public static boolean checkEmpty(ArrayList<String> list, String name){
