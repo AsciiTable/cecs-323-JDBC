@@ -247,9 +247,11 @@ public class Cecs323JDBC {
                         System.out.println();
                         executeQ(conn, pstmt, true, true);
                     }catch (SQLException se) {
+                        if (se instanceof SQLIntegrityConstraintViolationException){
+                            System.out.println("Duplicate Entry. Cannot Store into database.");
+                        }
                         //Handle errors for JDBC
-                        System.out.println("Duplicate Entry.");
-                        se.printStackTrace();
+                        //se.printStackTrace();
                     } catch (Exception e) {
                         //Handle errors for Class.forName
                         e.printStackTrace();
@@ -392,9 +394,13 @@ public class Cecs323JDBC {
                 rs = psmt.executeQuery();
             else
                 psmt.executeUpdate();
+                System.out.println("Complete.");
         } catch (SQLException se) {
+            if (se instanceof SQLIntegrityConstraintViolationException){
+                System.out.println("ERROR: Duplicate Entry. Cannot store into database.");
+            }
             //Handle errors for JDBC
-            se.printStackTrace();
+            //se.printStackTrace();
         } catch (Exception e) {
             //Handle errors for Class.forName
             e.printStackTrace();
@@ -487,6 +493,9 @@ public class Cecs323JDBC {
                             return store;
                         }
                     }
+                }else if(isBook){
+                    valid = true;
+                    return store;
                 }
             }else{
                 System.out.println("Invalid Input. Please enter string less than " + maxLen + " characters in length.");
