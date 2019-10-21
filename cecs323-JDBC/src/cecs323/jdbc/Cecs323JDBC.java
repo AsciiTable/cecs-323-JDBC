@@ -276,8 +276,6 @@ public class Cecs323JDBC {
                     break;
             }
         }
-        
-
         disconnectDB(conn);
         System.out.println("Goodbye!");
     }//end main
@@ -544,31 +542,3 @@ public class Cecs323JDBC {
         return false;
     }
 }
-
-
-                    /*try {
-                        String sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups"; 
-                        Statement stmt = conn.createStatement(); //initialize the statement that we're using
-                        ResultSet rs = executeQuery(conn, stmt, sql);
-
-                        //STEP 5: Extract data from result set
-                        System.out.printf(displayFormat, "Group Name", "Head Writer", "Year Formed", "Subject");
-                        while (rs.next()) {
-                            //Retrieve by column name
-                            String gname = rs.getString("groupname");
-                            String hwriter = rs.getString("headwriter");
-                            String yformed = rs.getString("yearformed");
-                            String subject = rs.getString("subject");
-                            //Display values
-                            System.out.printf(displayFormat, 
-                                    dispNull(gname), dispNull(hwriter), dispNull(yformed), dispNull(subject));
-                        }
-                        //STEP 6: Clean-up environment
-                        cleanup(stmt,rs);
-                    } catch (SQLException se) {
-                        //Handle errors for JDBC
-                        se.printStackTrace();
-                    } catch (Exception e) {
-                        //Handle errors for Class.forName
-                        e.printStackTrace();
-                    }**/
