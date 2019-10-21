@@ -20,7 +20,7 @@ public class Cecs323JDBC {
     static String PASS;
     /* User entered Database Name */
     static String DBNAME;
-    // Required entries to access database 
+    // Required entries to access database (ENTER THESE STRINGS IN ORDER TO ACCESS DB)
     /* Correct Database name*/
     static final String cDB = "clientdriver";
     /* Correct Username */
@@ -41,18 +41,25 @@ public class Cecs323JDBC {
     static String DB_URL = "jdbc:derby://localhost:1527/";
     
     public static void main(String[] args) {
-        login();
+        /* Logs user in */
+        login(); 
+        /* Creates new connection between program, database */
         Connection conn = connectDB();
-        Scanner menuIn = new Scanner(System.in);
+        /* Creates new Scanner to take in user input */
+        Scanner menuIn = new Scanner(System.in); 
+        /* Stays false until user wants to quit out of the menu */
         boolean quit = false;
+        /* Keeps track of menu input */
         int mOption = 0;
+        /* Stores sql statements */
         String sql = "";
-        
+        /* Initialize PreparedStatement */
         PreparedStatement pstmt;
                 
         // Begin Menu Loop
         while(!quit){
             System.out.println();
+            /* Prints Menu */
             printMenu();
             mOption = getIntBetween(menuIn, 1, 10, "Menu Selection");
             System.out.println();
@@ -66,12 +73,12 @@ public class Cecs323JDBC {
                         System.out.println();
                         
                         ResultSet rs = executeQ(conn, pstmt, true, false);
+                        /* Print out all Book names*/
                         System.out.println("\nGroup Name");
-                        boolean emptyCheck = true;
-                        
+                        boolean emptyCheck = true; // Assume that the the list of books is empty
                         while (rs.next()) {
                             //Retrieve by column name
-                            emptyCheck = false;
+                            emptyCheck = false; // not empty
                             String gname = rs.getString("groupname");
                             System.out.println(dispNull(gname));
                         }
@@ -90,15 +97,17 @@ public class Cecs323JDBC {
                 case 2:
                     // List all the data for ONE group specified by the user
                     try{
+                        /* String of user input to check valid input & store information */
                         String check = getWriterSelection(conn);
-                        if(!check.equals("")){
+                        if(!check.equals("")){ // if writer is valid
                             sql = "SELECT groupname, headwriter, yearformed, subject FROM WritingGroups "
                                 + "WHERE groupname = ?";
                             pstmt = conn.prepareStatement(sql);
-                            pstmt.setString(1, check);
+                            pstmt.setString(1, check); // Insert group name into sql
 
                             System.out.println();
                             ResultSet rs = executeQ(conn, pstmt, true, false);
+                            /* Print out WritingGroup information */
                             System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                             while (rs.next()) {
                                 //Retrieve by column name
@@ -128,6 +137,7 @@ public class Cecs323JDBC {
                         System.out.println();
                         
                         ResultSet rs = executeQ(conn, pstmt, true, false);
+                        /* Print out all publisher names */
                         System.out.println("\nPublisher Name");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -151,14 +161,16 @@ public class Cecs323JDBC {
                 case 4:
                     // List all the data for ONE publisher specified by the user
                     try{
+                        /* String of user input to check valid input & store information */
                         String check = getPublisherSelection(conn, false);
                         if(!check.equals("")){
                             sql = "SELECT publishername, publisheraddress, publisherphone, publisheremail FROM Publishers "
                                 + "WHERE publishername = ?";
                             pstmt = conn.prepareStatement(sql);
-                            pstmt.setString(1, check);
+                            pstmt.setString(1, check); // Insert publisher name into sql
                             System.out.println();
                             ResultSet rs = executeQ(conn, pstmt,true, false);
+                            /* Print out Information */
                             System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
                             while (rs.next()) {
                                 //Retrieve by column name
@@ -189,6 +201,7 @@ public class Cecs323JDBC {
                         System.out.println();
                         
                         ResultSet rs = executeQ(conn, pstmt, true, false);
+                        /* Print out all group names */
                         System.out.println("\nBook Title");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -213,6 +226,7 @@ public class Cecs323JDBC {
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
                     try{
+                        /* String of user input to check valid input & store information */
                         String[] check = getBookSelection(conn);
                         
                         if(!check[0].equals("")){
@@ -228,6 +242,7 @@ public class Cecs323JDBC {
                         
                             System.out.println();
                             ResultSet rs = executeQ(conn, pstmt, true, false);
+                            /* Print out all information */
                             System.out.printf(displayFormatBook, "\nBook Title", "Year Published", "Number Pages", 
                                     "Group Name", "Head Writer", "Year Formed", "Subject",
                                     "Publisher Name", "Publisher Address", "Publisher Phone", "Publisher Email");
@@ -323,9 +338,8 @@ public class Cecs323JDBC {
                     // Insert a new publisher and update all books published by one publisher
                     // to be published by the new publisher. Leave the old publisher alone, just modify
                     // the books that they have published. Assume that the new publisher has bought out
-                    // the old one, so now any books published by the old publisher are publishe sd by the new one
+                    // the old one, so now any books published by the old publisher are publishesd by the new one
                     try{
-                        boolean badPub = false;
                         //insert into customers (first_name, last_name, phone, street, zipcode)
                         //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
                         sql = "INSERT INTO Publishers (publishername, publisheraddress, publisherphone, publisheremail) values "+
@@ -387,7 +401,7 @@ public class Cecs323JDBC {
                         sql = "DELETE FROM Books WHERE booktitle = ? AND groupname = ?";
                         pstmt = conn.prepareStatement(sql);
                         String bookCheck[] = getBookSelection(conn);
-                        if(!bookCheck.equals("")){
+                        if(!bookCheck[0].equals("")){
                             pstmt.setString(1, bookCheck[0]);
                             if(!bookCheck[1].equals("")){
                                 pstmt.setString(2, bookCheck[1]);
