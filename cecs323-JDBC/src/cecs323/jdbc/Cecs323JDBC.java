@@ -172,7 +172,7 @@ public class Cecs323JDBC {
                     // List all book titles NAME ONLY
                     int empty = 0;
                     try{
-                        sql = "SELECT booktitle FROM Books";
+                        sql = "SELECT booktitle, groupname FROM Books";
                         pstmt = conn.prepareStatement(sql);
                         
                         System.out.println();
@@ -183,7 +183,8 @@ public class Cecs323JDBC {
                             //Retrieve by column name
                             empty++;
                             String btitle = rs.getString("booktitle");
-                            System.out.println(dispNull(btitle));
+                            String gname = rs.getString("groupname");
+                            System.out.println(dispNull(btitle) + " (By: " + dispNull(gname) + ")");
                         }
                     }catch (SQLException se) {
                         //Handle errors for JDBC
@@ -200,7 +201,7 @@ public class Cecs323JDBC {
                 case 6:
                     // List all the data for ONE book specified by the user INCLUDING Writing Groups and Publishers ALL DATA
                     try{
-                        String check = getBookSelection(conn);
+                        String[] check = getBookSelection(conn);
                         
                         if(!check.equals("")){
                             sql = "SELECT booktitle, yearpublished, numberpages, "
@@ -211,7 +212,7 @@ public class Cecs323JDBC {
                                 + "NATURAL JOIN publishers p "
                                 + "WHERE booktitle = ? AND w.groupname = b.groupname";
                             pstmt = conn.prepareStatement(sql);
-                            pstmt.setString(1, check);
+                            pstmt.setString(1, check[0]);
                         
                             System.out.println();
                             ResultSet rs = executeQ(conn, pstmt, true, false);
@@ -312,9 +313,18 @@ public class Cecs323JDBC {
                     try{
                         sql = "DELETE FROM Books WHERE booktitle = ? AND groupname = ?";
                         pstmt = conn.prepareStatement(sql);
-                        String strIn = "";
-                        
-                        strIn = getValidString(menuIn, 25, "Book Title");
+                        String bookCheck[] = getBookSelection(conn);
+                        if(!bookCheck.equals("")){
+                            pstmt.setString(1, bookCheck[0]);
+                            if(!bookCheck[1].equals("")){
+                                pstmt.setString(2, bookCheck[1]);
+                                executeQ(conn, pstmt, false, true);
+                            }
+                            else
+                                System.out.println("ERROR: Invalid Writing Group.");
+                        }
+                        else
+                            System.out.println("ERROR: Invalid Book Title.");
                     }catch (SQLException se) {
                         //Handle errors for JDBC
                         se.printStackTrace();
@@ -582,20 +592,22 @@ public class Cecs323JDBC {
         }
         return validPublisher;
     }
-    public static String getBookSelection(Connection conn){
-        String validBook = "";
+    public static String[] getBookSelection(Connection conn){
+        String[] validBook = new String[2];
         Scanner in = new Scanner(System.in);
         try{
             String sql = "SELECT booktitle FROM Books WHERE booktitle = ? AND groupname = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-
+            
             System.out.print("Book: ");
-            validBook = in.nextLine();
-            pstmt.setString(1, validBook);
-            pstmt.setString(2, getWriterSelection(conn));
+            validBook[0] = in.nextLine();
+            pstmt.setString(1, validBook[0]);
+            validBook[1] = getWriterSelection(conn);
+            pstmt.setString(2, validBook[1]);
             ResultSet rs = executeQ(conn, pstmt, false, false);
             if(!rs.next()){
-                validBook = "";
+                validBook[0] = "";
+                validBook[1] = "";
                 System.out.println("That book does not exist.");
             }
         }catch (SQLException se) {
