@@ -89,7 +89,7 @@ public class Cecs323JDBC {
                         pstmt = conn.prepareStatement(sql);
                         
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true);
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
                         System.out.printf(displayFormatWriter, "\nGroup Name", "Head Writer", "Year Formed", "Subject");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -136,7 +136,7 @@ public class Cecs323JDBC {
                         pstmt = conn.prepareStatement(sql);
                         pstmt.setString(1, publishers.get(mOption));
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt,true);
+                        ResultSet rs = executeQ(conn, pstmt,true, false);
                         System.out.printf(displayFormatPublisher, "\nPublisher Name", "Address", "Phone", "Email");
                         while (rs.next()) {
                             //Retrieve by column name
@@ -187,7 +187,7 @@ public class Cecs323JDBC {
                         pstmt.setString(1, books.get(mOption));
                         
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true);
+                        ResultSet rs = executeQ(conn, pstmt, true, false);
                         System.out.printf(displayFormatBook, "\nBook Title", "Year Published", "Number Pages", 
                                 "Group Name", "Head Writer", "Year Formed", "Subject",
                                 "Publisher Name", "Publisher Address", "Publisher Phone", "Publisher Email");
@@ -222,27 +222,33 @@ public class Cecs323JDBC {
                     try{
                         //insert into customers (first_name, last_name, phone, street, zipcode)
                         //values ('Tom', 'Jewett', '714-888-7000', '123 Mockingbird Lane', '90210');
-                        sql = "INSERT INTO books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
+                        sql = "INSERT INTO Books (groupname, publishername, booktitle, yearpublished, numberpages) values "+
                                 "(?, ?, ?, ?, ?)";
                         String strIn = "";
                         int intIn = -1;
                         
                         pstmt = conn.prepareStatement(sql);
-                        // Get String
-                        strIn = getValidString(menuIn, 30, "Writing Group:", true, writers);
-                        // Get String
-                        // Get String
-                        // Get Positive Int under 10000
-                        mOption = getIntBetween(menuIn, 0, 9999, "Year Published");
+                        // Get Writing Group
+                        strIn = getValidString(menuIn, 30, "Writing Group", true, false, writers);
+                        pstmt.setString(1, strIn);
+                        // Get Publisher
+                        strIn = getValidString(menuIn, 50, "Publisher", true, false, publishers);
+                        pstmt.setString(2, strIn);
+                        // Get Title
+                        strIn = getValidString(menuIn, 50, "Title", false, true, books);
+                        pstmt.setString(3, strIn);
+                        // Get Year
+                        intIn = getIntBetween(menuIn, 0, 9999, "Year Published");
+                        pstmt.setInt(4, intIn);
                         // Get Positive Int
-                        
-                        
-                        pstmt.setString(1, books.get(mOption));
+                        intIn = getPositiveInt(menuIn, "Number of Pages");
+                        pstmt.setInt(5, intIn);
                         
                         System.out.println();
-                        ResultSet rs = executeQ(conn, pstmt, true);
+                        executeQ(conn, pstmt, true, true);
                     }catch (SQLException se) {
                         //Handle errors for JDBC
+                        System.out.println("Duplicate Entry.");
                         se.printStackTrace();
                     } catch (Exception e) {
                         //Handle errors for Class.forName
@@ -375,14 +381,17 @@ public class Cecs323JDBC {
         }//end try
     }
     
-    public static ResultSet executeQ(Connection conn, PreparedStatement psmt, boolean showConnecting){
+    public static ResultSet executeQ(Connection conn, PreparedStatement psmt, boolean showConnecting, boolean updating){
         ResultSet rs = null;
          //STEP 4: Execute a query 
         try{
             if(showConnecting){
                 System.out.println("Creating statement...");
             }
-            rs = psmt.executeQuery();
+            if(!updating)
+                rs = psmt.executeQuery();
+            else
+                psmt.executeUpdate();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
@@ -428,13 +437,35 @@ public class Cecs323JDBC {
         }
         return mOption;
     }
+    public static int getPositiveInt(Scanner mIn, String prompt){
+        int mOption = -1;
+        boolean valid = false;
+        while(!valid){
+            System.out.print(prompt + ": ");
+            if(mIn.hasNextInt()){
+                mOption = mIn.nextInt();
+                if(mOption > -1){
+                    valid = true;
+                    return mOption;
+                }
+                else{
+                    System.out.println("Input out of range. Please choose a positive number.");
+                }
+                    
+            }else{
+                System.out.println("Invalid Input. Please enter an integer.");
+                mIn.next();
+            }
+        }
+        return mOption;
+    }
     
-    public static String getValidString(Scanner mIn, int maxLen, String prompt, boolean preex, ArrayList<String> arr){
+    public static String getValidString(Scanner mIn, int maxLen, String prompt, boolean preex, boolean isBook, ArrayList<String> arr){
         String store = "";
         boolean valid = false;
         while(!valid){
             System.out.print(prompt +": ");
-            store = mIn.next();
+            store = mIn.nextLine();
             if(store.length() <= maxLen && store.length() != 0){
                 if(preex){
                     for(int i = 0; i < arr.size(); i++){
@@ -444,16 +475,21 @@ public class Cecs323JDBC {
                         }
                     }
                     System.out.println("This " + prompt + " does not exist. Please enter a pre-existing " + prompt +".");
-                    
                 }
-                else{
-                    
+                else if(!preex && !isBook){
+                    for(int i = 0; i < arr.size(); i++){
+                        if(store.equals(arr.get(i))){
+                            System.out.println("This " + prompt + " already exists. Please enter a non-existing " + prompt +".");
+                            break;
+                        }
+                        else if(i == arr.size() - 1 && !store.equals(arr.get(i))){
+                            valid = true;
+                            return store;
+                        }
+                    }
                 }
-                valid = true;
-                return store;
             }else{
                 System.out.println("Invalid Input. Please enter string less than " + maxLen + " characters in length.");
-                mIn.next();
             }
         }
         return store;
